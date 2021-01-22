@@ -10,7 +10,7 @@ alphabetical = [] #List that can be sorted alphabetically
 length = {} #Dictionary that can be sorted by length of tokens
 
 def main():
-    url = "https://yle.fi/urheilu/3-11677300"
+    url = "https://www.theguardian.com/world"
     html = request.urlopen(url).read().decode('utf8')
     html[:60]
     raw = BeautifulSoup(html, 'html.parser').get_text()
