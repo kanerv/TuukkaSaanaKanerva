@@ -80,15 +80,34 @@ Below are my phonetic programs of choice, organized alphabetically by function. 
   </tr>
 </table> 
 
-<h3>Skandinavia <small><sub>(+ muut pohjoismaat)</sub></small></h3>
-<img src="scandi.jpeg" alt="Skandinavian kartta" width="197" height="255" style="float:left;border:1px solid black">
-<ul style="position:relative;left:20px;">
-<li>Ruotsi</li>
-<li>Norja</li>
-<li>Tanska</li>
-<ul style="list-style-type:circle;">
-<li>Suomi</li>
-<li>Islanti</li>
-</ul>
+	<h3>Skandinavia <small><sub>(+ muut pohjoismaat)</sub></small></h3>
+	<img src="scandi.jpeg" alt="Skandinavian kartta" width="197" height="255" style="border:1px solid black">
+	<ul style="position:relative;">
+		<li>Ruotsi</li>
+		<li>Norja</li>
+		<li>Tanska</li>
+	</ul>
+	<ul style="list-style-type:circle;">
+		<li>Suomi</li>
+		<li>Islanti</li>
+	</ul>
+	
+	<p>Haluaisitko vaihtaa taustavärin vaaleammaksi?</p>
+
+	<button id="antiquewhite">Vaalea tausta</button>
+	<script>
+
+		let body = document.querySelector('body');
+		document.querySelector('#antiquewhite').onclick = function() {		
+			body.style.backgroundColor = 'antiquewhite';
+		};
+	</script>
+	<br>
+	<br>
+	<form action="https://www.google.com/search" method="get">
+	<input name="q" type="text">
+	<input type="submit" value="Etsi Googlesta">
+	
+	</form>
 </body>
 </html>
