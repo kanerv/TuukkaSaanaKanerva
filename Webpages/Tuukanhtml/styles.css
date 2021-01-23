@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	
+	h2 {
+		font-size: 150%;
+		color: #6D8EBA;
+	}
+	h3 {
+		color:grey;
+		font-size: 120%;
+	}
+	table, th, td {
+		border: 1px solid black;
+	}
+	body {
+		background-color: #c2d8d3;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		margin-left: 300px;
+		margin-right: 300px;
+	}
+	img {
+		display: inline-block;
+		padding: 0.4em 0.4em 0.4em 0.4em;
+		border-radius: 20px;
+		background-color:#C69C9C;
+		border: 1px solid black
+	}
+	ul {
+		position: relative;
+		list-style-type: circle;
+	}
+	h1 {	
+		
+		padding: 0.2em 0.4em 0.2em 0.4em;
+		border-radius: 20px;
+		background-color:#C69C9C;
+		margin-top: 40px;
+		text-align: center;
+	}
+</style>
+</body>
+</html>
