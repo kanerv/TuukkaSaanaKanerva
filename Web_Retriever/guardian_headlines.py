@@ -20,7 +20,15 @@ def main():
     for i in lista:
         i = str(i).replace('  ',' ')
         cleanlist.append(i)
-    
+
+    print()
+    print("   _____                     _ _             ")
+    print("  / ____|                   | (_)            ")
+    print(" | |  __ _   _  __ _ _ __ __| |_  __ _ _ __  ")
+    print(" | | |_ | | | |/ _` | '__/ _` | |/ _` | '_ \ ")
+    print(" | |__| | |_| | (_| | | | (_| | | (_| | | | |")
+    print("  \_____|\__,_|\__,_|_|  \__,_|_|\__,_|_| |_|")
+    print()
     now = datetime.datetime.now()
     print("Current date and time is", now.strftime("%Y-%m-%d %H:%M:%S"))
     print()
