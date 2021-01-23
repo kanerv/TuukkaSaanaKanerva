@@ -1,42 +1,40 @@
-"""This program accesses the YLE and Guardian World News websites, retrieves text from them and
-prints the ten top headlines. The user can also visit the websites if there are interesting headlines."""
+"""This program accesses the Guardian World News website, retrieves text from it and
+prints the ten top headlines."""
 
 import nltk, requests, datetime, webbrowser
 from bs4 import BeautifulSoup
+from termcolor import colored
 lista = []
 cleanlist = []
 
 def main():
-    #The following code retrieves the website, gets its content and analyses it.
     url = "https://yle.fi/uutiset/tuoreimmat"
     html = requests.get(url)
     page = html.content
     soup = BeautifulSoup(page, 'html.parser')
-    #This for-loop finds all cases of html class that contains the headlines. These can be found in the source code of the page.
     for i in soup.find_all(class_="Typography__StyledResponsiveTypography-sc-1his0m9-1 dxkrlB link-accent"):
-        i = i.get_text() #this cleans the html markup
-        i = str(i).strip() #this strips empty rows
-        if len(lista) < 10: #This adds the first 10 headlines into a list
+        i = i.get_text()
+        i = str(i).strip()
+        if len(lista) < 10:
             lista.append(i)
     for i in lista:
-        i = str(i).replace('  ',' ') #These clean the text strings from white space and hyphenations.
+        i = str(i).replace('  ',' ')
         i = str(i).replace('­','')
-        cleanlist.append(i) #appends the cleaned strings into a new list: "cleanlist"
+        cleanlist.append(i)
     print()
-    print(" __     ___      ______ _____  _____ _____            _____ _____ ____  ")
-    print(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ")
-    print("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |")
-    print("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |")
-    print("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |")
-    print("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ")
+    print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
+    print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
+    print (colored("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |", "blue"))
+    print (colored("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |", "blue"))
+    print (colored("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |", "blue"))
+    print (colored("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ", "blue"))
     print()
-    now = datetime.datetime.now() #creates a variable with current time and date   
-    print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) # prints time and date
+    now = datetime.datetime.now()    
+    print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S"))
     print()
     print("Tuoreimmat kymmenen uutista ovat:\n")
-    print(*cleanlist, sep ='\n') #prints the cleanlist on separate rows
-
-    #This is done exactly the same as the one before
+    print(*cleanlist, sep ='\n*\n')
+    
     lista2 = []
     cleanlist2 = []
     url = "https://www.theguardian.com/world"
@@ -63,12 +61,10 @@ def main():
     print("Time is", now.strftime("%Y-%m-%d %H:%M:%S"))
     print()
     print("The first ten headlines from Guardian World News website are:\n")
-    print(*cleanlist2, sep ='\n')
+    print(*cleanlist2, sep ='\n*\n')
     print()
     print()
     print("***********")
-
-    #The following lines of code prompts the user with a message that they can open the yle or guardian websites.
     open_site = input("If you want to open YLE, Guardian or both websites, write \"yle\", \"guardian\", or \"both\", respectively: ") 
     if open_site == "yle":
         webbrowser.open('https://www.yle.fi/uutiset/tuoreimmat', new=2)
