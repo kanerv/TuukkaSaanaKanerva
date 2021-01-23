@@ -1,5 +1,0 @@
-print("Bye World!")
-print("Hellos World!")
-print("Never again!")
-print("Hello!")
-print("k")
