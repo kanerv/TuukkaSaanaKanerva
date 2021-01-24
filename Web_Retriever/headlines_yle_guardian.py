@@ -37,6 +37,8 @@ def main():
                 for link in soup.find_all(class_="GridSystem__GridRow-sc-15162af-1 ljWZzL visitableLink"):
                     link = link.get("href")
                     if len(linkit) < 10: #appends 10 first headlines to a list
+                        if link[0] == "/": #checks if the link is missing the beginning and adds it if needed
+                            link = "https://yle.fi" + link
                         linkit.append(link)
 
 
@@ -78,6 +80,7 @@ def main():
             elif which_headline == "2":
                 lista3 = []
                 cleanlist3 = []
+                linkit3 = []
             
                 url = "https://yle.fi/uutiset/"
 
@@ -94,6 +97,15 @@ def main():
                         i = str(i).replace('  ',' ') #cleans extra white space and hyphenation from the headlines
                         i = str(i).replace('­','')
                         lista3.append(i)
+
+                #this for-loop extracts the url links corresponding the headlines
+                for link in soup.find_all(class_="Headline__Direction-sc-5nx0d9-0 fAhMa visitableLink"):
+                    link = link.get("href")
+                    if len(linkit3) < 10: #appends 10 first headlines to a list
+                        if link[0] == "/": #checks if the link is missing the beginning and adds it if needed
+                            link = "https://yle.fi" + link
+                        linkit3.append(link)
+
     
                 print()
                 print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
@@ -109,7 +121,10 @@ def main():
                 print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
                 print()
                 print("Luetuimmat kymmenen uutista ovat:\n")
-                print(*lista3, sep ='\n*\n') #prints headlines on separate rows
+
+                for i, (x, y) in enumerate(zip(lista3, linkit3)):
+                    print(x, "\nURL:", y, "\n*")
+                #print(*lista3, sep ='\n*\n') #prints headlines on separate rows
                 print("***********")
                 print()
             
@@ -119,6 +134,7 @@ def main():
         if interest == "2":
             lista2 = []
             cleanlist2 = []
+            linkit2 = []
 
             url = "https://www.theguardian.com/world"
             html = requests.get(url)
@@ -131,7 +147,15 @@ def main():
                 i = str(i).replace('  ',' ')
                 if len(lista2) < 10:
                     lista2.append(i)
+                    
+            #this for-loop extracts the url links corresponding the headlines
+            for link in soup.find_all(class_="fc-item__link"):
+                link = link.get("href")
+                if len(linkit2) < 10: #appends 10 first headlines to a list
+                    linkit2.append(link)
+                    
             now = datetime.datetime.now() #creates a variable that contains current time
+            
             print("***********")
             print()
             print(colored("   _____                     _ _             ", "cyan"))
@@ -144,7 +168,9 @@ def main():
             print("Time is", now.strftime("%Y-%m-%d %H:%M:%S"))
             print()
             print("The first ten headlines from Guardian World News website are:\n")
-            print(*lista2, sep ='\n*\n')
+            for i, (x, y) in enumerate(zip(lista2, linkit2)):
+                print(x, "\nURL:", y, "\n*")
+            #print(*lista2, sep ='\n*\n')
             print("***********")
             print()
 
