@@ -19,45 +19,89 @@ def main():
     while open_site == "b":
         interest = input("Would you like to see news from (1) Yle or (2) Guardian? Type 1 or 2: ")
         if interest == "1":
-            lista = []
-            cleanlist = []
-            url = "https://yle.fi/uutiset/tuoreimmat"
-        
-            #next lines of code extract the source code of the website and analyse its contents
-            html = requests.get(url)
-            page = html.content
-            soup = BeautifulSoup(page, 'html.parser')
+            which_headline = input("Haluaisitko nähdä (1) tuoreimmat vai (2) luetuimmat uutisotsikot? Valitse 1 tai 2: ")
+            if which_headline == "1":
+                lista = []
+                cleanlist = []
+            
+                url = "https://yle.fi/uutiset/tuoreimmat"
 
-            #this for-loop finds all cases of the html class that have headlines.
-            for i in soup.find_all(class_="Typography__StyledResponsiveTypography-sc-1his0m9-1 dxkrlB link-accent"):
-                i = i.get_text()    #cleans html markup
-                i = str(i).strip()  #cleans extra white rows
-                if len(lista) < 10: #appends 10 first headlines to a list
-                    lista.append(i)
+                #next lines of code extract the source code of the website and analyse its contents
+                html = requests.get(url)
+                page = html.content
+                soup = BeautifulSoup(page, 'html.parser')
 
-            for i in lista:
-                i = str(i).replace('  ',' ') #cleans extra white space and hyphenation from the headlines
-                i = str(i).replace('­','')
-                cleanlist.append(i)
+                #this for-loop finds all cases of the html class that have headlines.
+                for i in soup.find_all(class_="HeadlineMetaData__Container-sc-1n8lae9-0 jbHgbW"):
+                    i = i.get_text()    #cleans html markup
+                    i = str(i).strip()  #cleans extra white rows
+                    if len(lista) < 10: #appends 10 first headlines to a list
+                        lista.append(i)
+    
+                for i in lista:
+                    i = str(i).replace('  ',' ') #cleans extra white space and hyphenation from the headlines
+                    i = str(i).replace('­','')
+                    cleanlist.append(i)
+    
+                print()
+                print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
+                print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
+                print (colored("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |", "blue"))
+                print (colored("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |", "blue"))
+                print (colored("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |", "blue"))
+                print (colored("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ", "blue"))
+                print()
+    
+                now = datetime.datetime.now() #creates a variable that contains current time
+    
+                print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
+                print()
+                print("Tuoreimmat kymmenen uutista ovat:\n")
+                print(*cleanlist, sep ='\n*\n') #prints headlines on separate rows
+                print("***********")
+                print()
 
-            print()
-            print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
-            print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
-            print (colored("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |", "blue"))
-            print (colored("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |", "blue"))
-            print (colored("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |", "blue"))
-            print (colored("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ", "blue"))
-            print()
+            elif which_headline == "2":
+                lista3 = []
+                cleanlist3 = []
+            
+                url = "https://yle.fi/uutiset/"
 
-            now = datetime.datetime.now() #creates a variable that contains current time
+                #next lines of code extract the source code of the website and analyse its contents
+                html = requests.get(url)
+                page = html.content
+                soup = BeautifulSoup(page, 'html.parser')
 
-            print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
-            print()
-            print("Tuoreimmat kymmenen uutista ovat:\n")
-            print(*cleanlist, sep ='\n*\n') #prints headlines on separate rows
-            print("***********")
-            print()
-        
+                #this for-loop finds all cases of the html class that have headlines.
+                for i in soup.find_all("h6", class_="Typography__StyledResponsiveTypography-sc-1his0m9-1 dpfFnA link-accent"):
+                    i = i.get_text()    #cleans html markup
+                    i = str(i).strip()  #cleans extra white rows
+                    if len(lista3) < 10: #appends 10 first headlines to a list
+                        lista3.append(i)
+    
+                for i in lista3:
+                    i = str(i).replace('  ',' ') #cleans extra white space and hyphenation from the headlines
+                    i = str(i).replace('­','')
+                    cleanlist3.append(i)
+    
+                print()
+                print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
+                print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
+                print (colored("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |", "blue"))
+                print (colored("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |", "blue"))
+                print (colored("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |", "blue"))
+                print (colored("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ", "blue"))
+                print()
+    
+                now = datetime.datetime.now() #creates a variable that contains current time
+    
+                print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
+                print()
+                print("Luetuimmat kymmenen uutista ovat:\n")
+                print(*cleanlist3, sep ='\n*\n') #prints headlines on separate rows
+                print("***********")
+                print()
+            
             """The following code until "open_site" is exactly the same as the first half"""
             
             
