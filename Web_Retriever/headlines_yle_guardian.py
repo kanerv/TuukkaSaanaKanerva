@@ -32,7 +32,7 @@ def main():
                 soup = BeautifulSoup(page, 'html.parser')
 
                 #this for-loop finds all cases of the html class that have headlines.
-                for i in soup.find_all(class_="HeadlineMetaData__Container-sc-1n8lae9-0 jbHgbW"):
+                for i in soup.find_all(class_="Typography__StyledResponsiveTypography-sc-1his0m9-1 dxkrlB link-accent"):
                     i = i.get_text()    #cleans html markup
                     i = str(i).strip()  #cleans extra white rows
                     if len(lista) < 10: #appends 10 first headlines to a list
