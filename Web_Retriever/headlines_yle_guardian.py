@@ -21,15 +21,24 @@ def main():
         if interest == "1":
             which_headline = input("Haluaisitko nähdä (1) tuoreimmat vai (2) luetuimmat uutisotsikot? Valitse 1 tai 2: ")
             if which_headline == "1":
+                
                 lista = []
-                cleanlist = []
-            
+                cleanlist = []     
+                linkit = []            
+
                 url = "https://yle.fi/uutiset/tuoreimmat"
 
                 #next lines of code extract the source code of the website and analyse its contents
                 html = requests.get(url)
                 page = html.content
                 soup = BeautifulSoup(page, 'html.parser')
+
+        	#this for-loop extracts the url links corresponding the headlines
+                for link in soup.find_all(class_="GridSystem__GridRow-sc-15162af-1 ljWZzL visitableLink"):
+                    link = link.get("href")
+                    if len(linkit) < 10: #appends 10 first headlines to a list
+                        linkit.append(link)
+
 
                 #this for-loop finds all cases of the html class that have headlines.
                 for i in soup.find_all(class_="Typography__StyledResponsiveTypography-sc-1his0m9-1 dxkrlB link-accent"):
@@ -54,7 +63,15 @@ def main():
                 print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
                 print()
                 print("Tuoreimmat kymmenen uutista ovat:\n")
-                print(*lista, sep ='\n*\n') #prints headlines on separate rows
+
+                for i, (x, y) in enumerate(zip(lista, linkit)):
+                    print(x, "\nURL:", y, "\n*")
+
+                #for i in lista:
+                 #   for c in linkit:
+                  #      print(i)
+                   #     print(c)
+#                print(*lista, sep ='\n*\n') #prints headlines on separate rows
                 print("***********")
                 print()
 
