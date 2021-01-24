@@ -35,14 +35,11 @@ def main():
                 for i in soup.find_all(class_="Typography__StyledResponsiveTypography-sc-1his0m9-1 dxkrlB link-accent"):
                     i = i.get_text()    #cleans html markup
                     i = str(i).strip()  #cleans extra white rows
-                    if len(lista) < 10: #appends 10 first headlines to a list
-                        lista.append(i)
-    
-                for i in lista:
                     i = str(i).replace('  ',' ') #cleans extra white space and hyphenation from the headlines
                     i = str(i).replace('­','')
-                    cleanlist.append(i)
-    
+                    if len(lista) < 10: #appends 10 first headlines to a list
+                        lista.append(i)
+                        
                 print()
                 print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
                 print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
@@ -57,7 +54,7 @@ def main():
                 print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
                 print()
                 print("Tuoreimmat kymmenen uutista ovat:\n")
-                print(*cleanlist, sep ='\n*\n') #prints headlines on separate rows
+                print(*lista, sep ='\n*\n') #prints headlines on separate rows
                 print("***********")
                 print()
 
@@ -77,12 +74,9 @@ def main():
                     i = i.get_text()    #cleans html markup
                     i = str(i).strip()  #cleans extra white rows
                     if len(lista3) < 10: #appends 10 first headlines to a list
+                        i = str(i).replace('  ',' ') #cleans extra white space and hyphenation from the headlines
+                        i = str(i).replace('­','')
                         lista3.append(i)
-    
-                for i in lista3:
-                    i = str(i).replace('  ',' ') #cleans extra white space and hyphenation from the headlines
-                    i = str(i).replace('­','')
-                    cleanlist3.append(i)
     
                 print()
                 print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
@@ -98,7 +92,7 @@ def main():
                 print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
                 print()
                 print("Luetuimmat kymmenen uutista ovat:\n")
-                print(*cleanlist3, sep ='\n*\n') #prints headlines on separate rows
+                print(*lista3, sep ='\n*\n') #prints headlines on separate rows
                 print("***********")
                 print()
             
@@ -117,11 +111,9 @@ def main():
             for i in soup.find_all(class_="fc-item__title"):
                 i = i.get_text()
                 i = str(i).strip()
+                i = str(i).replace('  ',' ')
                 if len(lista2) < 10:
                     lista2.append(i)
-            for i in lista2:
-                i = str(i).replace('  ',' ')
-                cleanlist2.append(i)
             now = datetime.datetime.now() #creates a variable that contains current time
             print("***********")
             print()
@@ -135,7 +127,7 @@ def main():
             print("Time is", now.strftime("%Y-%m-%d %H:%M:%S"))
             print()
             print("The first ten headlines from Guardian World News website are:\n")
-            print(*cleanlist2, sep ='\n*\n')
+            print(*lista2, sep ='\n*\n')
             print("***********")
             print()
 
