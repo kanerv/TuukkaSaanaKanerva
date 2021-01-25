@@ -74,11 +74,11 @@ def main():
                     if len(lista) < 10: #appends 10 first headlines to a list
                         lista.append(i)
                         
-
+                print("***********")
+                
                 yle_logo() #Calling for the function yle_logo
-    
+                
                 now = datetime.datetime.now() #creates a variable that contains current time
-    
                 print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
                 print()
                 print("Tuoreimmat kymmenen uutista ovat:\n")
@@ -123,8 +123,10 @@ def main():
                             link = "https://yle.fi" + link
                         linkit3.append(link)
 
+                print("***********")
+                
                 yle_logo()
-    
+                
                 now = datetime.datetime.now() #creates a variable that contains current time
     
                 print("Kello on tällä hetkellä", now.strftime("%Y-%m-%d %H:%M:%S")) #print current time
