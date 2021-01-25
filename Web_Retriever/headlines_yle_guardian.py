@@ -13,6 +13,29 @@ import nltk, requests, datetime, webbrowser
 from bs4 import BeautifulSoup
 from termcolor import colored
 
+"""Defining functions"""
+
+def yle_logo():
+    print()
+    print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
+    print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
+    print (colored("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |", "blue"))
+    print (colored("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |", "blue"))
+    print (colored("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |", "blue"))
+    print (colored("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ", "blue"))
+    print()
+
+def guardian_logo():
+    print()
+    print(colored("   _____                     _ _             ", "cyan"))
+    print(colored("  / ____|                   | (_)            ", "cyan"))
+    print(colored(" | |  __ _   _  __ _ _ __ __| |_  __ _ _ __  ", "cyan"))
+    print(colored(" | | |_ | | | |/ _` | '__/ _` | |/ _` | '_ \ ", "cyan"))
+    print(colored(" | |__| | |_| | (_| | | | (_| | | (_| | | | |", "cyan"))
+    print(colored("  \_____|\__,_|\__,_|_|  \__,_|_|\__,_|_| |_|", "cyan"))
+    print()    
+    
+
 
 def main():
     open_site = "b"
@@ -51,14 +74,8 @@ def main():
                     if len(lista) < 10: #appends 10 first headlines to a list
                         lista.append(i)
                         
-                print()
-                print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
-                print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
-                print (colored("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |", "blue"))
-                print (colored("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |", "blue"))
-                print (colored("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |", "blue"))
-                print (colored("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ", "blue"))
-                print()
+
+                yle_logo() #Calling for the function yle_logo
     
                 now = datetime.datetime.now() #creates a variable that contains current time
     
@@ -106,15 +123,7 @@ def main():
                             link = "https://yle.fi" + link
                         linkit3.append(link)
 
-    
-                print()
-                print (colored(" __     ___      ______ _____  _____ _____            _____ _____ ____  ", "blue"))
-                print (colored(" \ \   / / |    |  ____|_   _|/ ____|  __ \     /\   |  __ \_   _/ __ \ ", "blue"))
-                print (colored("  \ \_/ /| |    | |__    | | | (___ | |__) |   /  \  | |  | || || |  | |", "blue"))
-                print (colored("   \   / | |    |  __|   | |  \___ \|  _  /   / /\ \ | |  | || || |  | |", "blue"))
-                print (colored("    | |  | |____| |____ _| |_ ____) | | \ \  / ____ \| |__| || || |__| |", "blue"))
-                print (colored("    |_|  |______|______|_____|_____/|_|  \_\/_/    \_\_____/_____\____/ ", "blue"))
-                print()
+                yle_logo()
     
                 now = datetime.datetime.now() #creates a variable that contains current time
     
@@ -157,14 +166,7 @@ def main():
             now = datetime.datetime.now() #creates a variable that contains current time
             
             print("***********")
-            print()
-            print(colored("   _____                     _ _             ", "cyan"))
-            print(colored("  / ____|                   | (_)            ", "cyan"))
-            print(colored(" | |  __ _   _  __ _ _ __ __| |_  __ _ _ __  ", "cyan"))
-            print(colored(" | | |_ | | | |/ _` | '__/ _` | |/ _` | '_ \ ", "cyan"))
-            print(colored(" | |__| | |_| | (_| | | | (_| | | (_| | | | |", "cyan"))
-            print(colored("  \_____|\__,_|\__,_|_|  \__,_|_|\__,_|_| |_|", "cyan"))
-            print()
+            guardian_logo()
             print("Time is", now.strftime("%Y-%m-%d %H:%M:%S"))
             print()
             print("The first ten headlines from Guardian World News website are:\n")
