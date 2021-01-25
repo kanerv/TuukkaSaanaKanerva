@@ -12,6 +12,7 @@
 import nltk, requests, datetime, webbrowser
 from bs4 import BeautifulSoup
 from termcolor import colored
+from urllib import request #to make the reuter's retrieval work
 
 """Defining functions"""
 
@@ -33,14 +34,24 @@ def guardian_logo():
     print(colored(" | | |_ | | | |/ _` | '__/ _` | |/ _` | '_ \ ", "cyan"))
     print(colored(" | |__| | |_| | (_| | | | (_| | | (_| | | | |", "cyan"))
     print(colored("  \_____|\__,_|\__,_|_|  \__,_|_|\__,_|_| |_|", "cyan"))
-    print()    
+    print()
+
+def reuters_logo():
+    print()
+    print()(colored("__________               __                      ", "red"))
+    print()(colored("\______  \ ____  __ ___/  |_  ___________  ______", "red"))
+    print()(colored("|       _// __ \|  |  \   __\/ __ \_  __ \/  ___/", "red"))
+    print()(colored("|    |   \  ___/|  |  /|  | \  ___/|  | \/\___ \ ", "red"))
+    print()(colored("|____|_  /\___  >____/ |__|  \___  >__|  /____  >", "red"))
+    print()(colored("       \/     \/                 \/           \/ ", "red"))
+    print()
     
 
 
 def main():
     open_site = "b"
     while open_site == "b":
-        interest = input("Would you like to see news from (1) Yle or (2) Guardian? Type 1 or 2: ")
+        interest = input("Would you like to see news from (1) Yle or (2) Guardian or (3) Reuters? Type 1, 2 or 3: ")
         if interest == "1":
             which_headline = input("Haluaisitko nähdä (1) tuoreimmat vai (2) luetuimmat uutisotsikot? Valitse 1 tai 2: ")
             if which_headline == "1":
@@ -177,6 +188,49 @@ def main():
             #print(*lista2, sep ='\n*\n')
             print("***********")
             print()
+                    
+
+        if interest == "3":
+            lista4 = []
+            cleanlist4 = []
+            linkit4 = []
+            
+            """Tried another way of retrieving the website"""
+            url = "https://www.reuters.com/world"
+            html = request.urlopen(url).read().decode('utf8')
+            
+            #url = "https://www.reuters.com/world"
+            #html = requests.get(url)
+            #page = html.content
+
+            soup = BeautifulSoup(html, 'html.parser')
+    
+            for i in soup.find_all(class_="story-title"):
+                i = i.get_text()
+                i = str(i).strip()
+                i = str(i).replace('  ',' ')
+                if len(lista4) < 10:
+                    lista4.append(i)
+                        
+            #this for-loop extracts the url links corresponding the headlines
+            #for link in soup.find_all(class_="story-content"):                  #THIS ONE DOESN'T WORK YET, NEED TO FIND THE RIGHT CLASS?
+            #    link = link.get("href")
+            #    if len(linkit4) < 10: #appends 10 first headlines to a list
+            #        linkit4.append(link)
+                    
+            now = datetime.datetime.now() #creates a variable that contains current time
+            
+            print("***********")
+            reuters_logo()
+            print("Time is", now.strftime("%Y-%m-%d %H:%M:%S"))
+            print()
+            print("The first ten headlines from Reuters World News website are:\n")
+            for i, (x, y) in enumerate(zip(lista4)):           #when links work, add linkit4
+                print(x, "\nURL:", y, "\n*")
+            #print(*lista2, sep ='\n*\n')
+            print("***********")
+            print()
+                    
 
             """Next, the program asks for input on what the user wants to do, i.e. open a website, refresh the headlines, or quit."""
         
@@ -193,4 +247,4 @@ def main():
             print("Thank you. Goodbye!")
         if open_site == "":
             print("Thank you. Goodbye!")
-main()  
+main()
