@@ -51,7 +51,7 @@ def reuters_logo():
 def main():
     open_site = "b"
     while open_site == "b":
-        interest = input("Would you like to see news from (1) Yle or (2) Guardian or (3) Reuters? Type 1, 2 or 3: ")
+        interest = input("Would you like to see news from (1) Yle or (2) Guardian or (3) BBC? Type 1, 2 or 3: ")
         if interest == "1":
             which_headline = input("Haluaisitko nähdä (1) tuoreimmat vai (2) luetuimmat uutisotsikot? Valitse 1 tai 2: ")
             if which_headline == "1":
@@ -227,7 +227,7 @@ def main():
             reuters_logo()
             print("Time is", now.strftime("%Y-%m-%d %H:%M:%S"))
             print()
-            print("The first ten headlines from Reuters World News website are:\n")
+            print("The first ten headlines from BBC World News website are:\n")
             
             for i, (x, y) in enumerate(zip(lista4, linkit4)):
                 print(x, "\nURL:", y, "\n*")
