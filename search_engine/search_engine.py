@@ -43,3 +43,7 @@ print(cv.vocabulary_) # note the _ at the end
 
 print("Row index of 'example':", cv.vocabulary_["example"])
 print("Row index of 'silly':", cv.vocabulary_["silly"])
+<<<<<<< HEAD
+=======
+
+>>>>>>> df81a73d0091341a6b7530ee4186573a8bde65cf
