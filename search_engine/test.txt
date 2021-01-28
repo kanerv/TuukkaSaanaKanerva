@@ -1,0 +1,6 @@
+This is the first line consisting of nine words.
+This is the second line consisting of 18 words and 101 characters including the new-line at the end.
+The third line is followed by an empty line...
+
+    The fifth line has    some     extra     spaces, but it still contains 14 words only.
+Single characters separated by space % , l 9 ( ) count as words.
