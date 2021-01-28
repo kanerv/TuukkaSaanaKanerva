@@ -1,5 +1,8 @@
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3043897a9e9fcbed0d3651b602e10176ff6fdad1
 from sklearn.feature_extraction.text
 import CountVectorizer
 
@@ -48,3 +51,7 @@ print("Row index of 'silly':", cv.vocabulary_["silly"])
 
 =======
 >>>>>>> b5d0a7255166c98d447ae0111f473165f2c23f6a
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3043897a9e9fcbed0d3651b602e10176ff6fdad1
