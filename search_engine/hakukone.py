@@ -43,8 +43,16 @@ def main():
     def test_query(query):
         print("Query: '" + query + "'")
         print("Rewritten:", rewrite_query(query))
-        print("Matching:", eval(rewrite_query(query))) # Eval runs the string as a Python command
+        #print("Matching:", eval(rewrite_query(query))) # Eval runs the string as a Python command
+
+        #Printing the matches instead of ones and zeros
+        hits_matrix = eval(rewrite_query(query))
+        hits_list = list(hits_matrix.nonzero()[1])
+        for i, doc_idx in enumerate(hits_list):
+            print("Matching doc #{:d}: {:s}".format(i, documents[doc_idx]))
         print()
+
+
 
     query = "?"
     while query != "":
