@@ -1,19 +1,18 @@
 from sklearn.feature_extraction.text import CountVectorizer
 
-
+#########################################
+#This program is a search engine        #
+#created for Building NLP Apllications  #
+#week 2 assignment.                     #
+#########################################
 
 def main():
     documents = ["This is a silly example",
          "A better example",
          "Nothing to see here",
          "This is a great and long example"]
-#    query = "?"
 
-#    while query != "":
-
-        
-#        query = ("Enter search term: ")
-
+    
     cv = CountVectorizer(lowercase=True, binary=True)
     sparse_matrix = cv.fit_transform(documents)
 
@@ -34,7 +33,7 @@ def main():
         "or": "|", "OR": "|",
         "not": "1 -", "NOT": "1 -",
         "(": "(", ")": ")"}          # operator replacements
-   
+           
     def rewrite_token(t):
         return d.get(t, 'td_matrix[t2i["{:s}"]]'.format(t)) # Can you figure out what happens here?
 
@@ -47,26 +46,34 @@ def main():
         print("Matching:", eval(rewrite_query(query))) # Eval runs the string as a Python command
         print()
 
-    test_query("example AND NOT nothing")
-    test_query("NOT example OR great")
-    test_query("( NOT example OR great ) AND nothing") # AND, OR, NOT can be written either in ALLCAPS
-    test_query("( not example or great ) and nothing") # ... or all small letters
-    test_query("not example and not nothing")
+    query = "?"
+    while query != "":
+        query = input("Enter search term? \nIf you want to quit press enter.\n")
+        if query != "":
+            test_query(query)
+        else:
+            print("You did not enter a query, bye!")
 
-    #sparse_td_matrix = sparse_matrix.T.tocsr() --> scaling up osaan
+        #test_query("example AND NOT nothing")
+        #test_query("NOT example OR great")
+        #test_query("( NOT example OR great ) AND nothing") # AND, OR, NOT can be written either in ALLCAPS
+        #test_query("( not example or great ) and nothing") # ... or all small letters
+        #test_query("not example and not nothing")
 
-    #def rewrite_token(t):
-        #return d.get(t, 'sparse_td_matrix[t2i["{:s}"]].todense()'.format(t)) # Make retrieved rows dense
+        #sparse_td_matrix = sparse_matrix.T.tocsr() --> scaling up osaan
+
+        #def rewrite_token(t):
+            #return d.get(t, 'sparse_td_matrix[t2i["{:s}"]].todense()'.format(t)) # Make retrieved rows dense
 
 
-        #hits_matrix = eval(rewrite_query("NOT example OR great"))
+            #hits_matrix = eval(rewrite_query("NOT example OR great"))
 
-        #hits_list = list(hits_matrix.nonzero()[1])
+            #hits_list = list(hits_matrix.nonzero()[1])
 
-        #for doc_idx in hits_list:
-            #print("Matching doc:", documents[doc_idx])
+            #for doc_idx in hits_list:
+                #print("Matching doc:", documents[doc_idx])
 
-        #for i, doc_idx in enumerate(hits_list):
-            #print("Matching doc #{:d}: {:s}".format(i, documents[doc_idx]))
+            #for i, doc_idx in enumerate(hits_list):
+                #print("Matching doc #{:d}: {:s}".format(i, documents[doc_idx]))
 
 main()
