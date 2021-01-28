@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 from sklearn.feature_extraction.text
 import CountVectorizer
 
@@ -45,3 +46,5 @@ print(cv.vocabulary_) # note the _ at the end
 print("Row index of 'example':", cv.vocabulary_["example"])
 print("Row index of 'silly':", cv.vocabulary_["silly"])
 
+=======
+>>>>>>> b5d0a7255166c98d447ae0111f473165f2c23f6a
