@@ -16,8 +16,9 @@ def main():
         documents = []
 
         pattern = r'(?u)\b\w+\b' #a new regex that takes into account tokens comprised of a singe alphanumerical character
- 
-        file = open("finnish_corpus.txt", "r") #Opens the file
+        print("This is TuukkaSaanaKanerva's search engine.")
+        path = input("Please input file path: ")
+        file = open(path, "r") #Opens the file
 
         for line in file:           #because the file is massive,
                                     #this is better than read(),
@@ -75,7 +76,7 @@ def main():
 
         query = "?"
         while query != "":
-            print("This is TuukkaSaanaKanerva's search engine.\nYou can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
+            print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
             query = input("Enter a search term: ")
             if query != "":
                 test_query(query)
