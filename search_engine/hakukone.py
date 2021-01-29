@@ -74,7 +74,8 @@ def main():
 
         query = "?"
         while query != "":
-            query = input("Enter search term? \nIf you want to quit press enter.\n")
+            print("This is TuukkaSaanaKanerva's search engine.\nYou can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
+            query = input("Enter a search term: ")
             if query != "":
                 test_query(query)
             else:
