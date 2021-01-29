@@ -1,4 +1,5 @@
 from sklearn.feature_extraction.text import CountVectorizer
+import re
 
 #########################################
 #This program is a search engine        #
@@ -12,8 +13,9 @@ def main():
          "Nothing to see here",
          "This is a great and long example"]
 
+    pattern = r'(?u)\b\w+\b'
     
-    cv = CountVectorizer(lowercase=True, binary=True)
+    cv = CountVectorizer(lowercase=True, binary=True, token_pattern=pattern)
     sparse_matrix = cv.fit_transform(documents)
 
     dense_matrix = sparse_matrix.todense()
