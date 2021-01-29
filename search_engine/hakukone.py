@@ -1,5 +1,5 @@
 from sklearn.feature_extraction.text import CountVectorizer
-import re
+import re, fileinput
 
 #########################################
 #This program is a search engine        #
@@ -12,14 +12,24 @@ def main():
     
 
     try:
-
+        teksti = []
         documents = []
 
         pattern = r'(?u)\b\w+\b' #a new regex that takes into account tokens comprised of a singe alphanumerical character
  
-        file = open("enwiki-20181001-corpus.100-articles.txt", "r") #Opens the file
-        file_variable = file.read() #Reads the contents
-        documents = file_variable.split("</article>") #splits the file into a list at </article>
+        file = open("finnish_corpus.txt", "r") #Opens the file
+
+        for line in file:           #because the file is massive,
+                                    #this is better than read(),
+                                    #as it doesn't store the whole
+                                    #thing into memory
+            if len(teksti) < 1000:
+                teksti.append(line)
+
+        #file_variable = file.read() #Reads the contents(dead code)
+
+        text_string = "".join(teksti)
+        documents = text_string.split("</article>") #splits the file into a list at </article>
         file.close()
 
         
@@ -56,7 +66,7 @@ def main():
             try:
                 hits_matrix = eval(rewrite_query(query))
                 hits_list = list(hits_matrix.nonzero()[1])
-                for i, doc_idx in enumerate(hits_list):
+                for i, doc_idx in enumerate(hits_list[0:9]):
                     print("Matching doc #{:d}: {:s}".format(i, documents[doc_idx]))
                     print()
 
