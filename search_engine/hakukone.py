@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
 import re, fileinput
+from termcolor import colored
 
 #########################################
 #This program is a search engine        #
@@ -16,7 +17,7 @@ def main():
         documents = []
 
         pattern = r'(?u)\b\w+\b' #a new regex that takes into account tokens comprised of a singe alphanumerical character
-        print("This is TuukkaSaanaKanerva's search engine.")
+        print(colored("This is TuukkaSaanaKanerva's search engine.", "green"))
         path = input("Please input file path: ")
         file = open(path, "r") #Opens the file
 
@@ -74,6 +75,7 @@ def main():
                 hits_matrix = eval(rewrite_query(query))
                 hits_list = list(hits_matrix.nonzero()[1])
                 for i, doc_idx in enumerate(hits_list[0:9]):
+                    print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
                     print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
                     print()
 
