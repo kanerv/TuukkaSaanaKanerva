@@ -61,21 +61,31 @@ def main():
 
         def test_query(query):
             print("Query: '" + query + "'")
-            print("Rewritten:", rewrite_query(query))
 
             try:
                 hits_matrix = eval(rewrite_query(query))
                 hits_list = list(hits_matrix.nonzero()[1])
-                for i, doc_idx in enumerate(hits_list[0:9]):
-                    print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
-                    print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
-                    print()
+                if len(hits_list) == 0:
+                    print("Search term not found. There were no matching articles.")
+                elif len(hits_list) > 10:
+                    print("Your search term(s) appeared in " + str(len(hits_list)) + " articles. Here is a preview of the first ten articles:")
+                    for i, doc_idx in enumerate(hits_list[0:10]):
+                        print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
+                        print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
+                        print()
+                else:
+                    print("Your search term(s) appeared in " + str(len(hits_list)) + " articles. Here is a preview of all the articles:")
+                    for i, doc_idx in enumerate(hits_list[0:10]):
+                        print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
+                        print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
+                        print()
 
             except KeyError:
                 print("Search term not found. No Matching doc.")         
 
         query = "?"
         while query != "":
+            print(colored("We are ready to search!", "green"))
             print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
             query = input("Enter a search term: ")
             query = query.lower()
@@ -85,7 +95,7 @@ def main():
                 print("You did not enter a query, bye!")
 
     except OSError:
-        print("Could not find the file.")
+        print("Could not find the file. Good bye!")
 
 
 main()
