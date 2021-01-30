@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
-import re, fileinput
+import re, fileinput, mmap
+from tqdm import tqdm
 from termcolor import colored
 
 #########################################
@@ -19,14 +20,19 @@ def main():
         pattern = r'(?u)\b\w+\b' #a new regex that takes into account tokens comprised of a singe alphanumerical character
         print(colored("This is TuukkaSaanaKanerva's search engine.", "green"))
         path = input("Please input file path: ")
-        file = open(path, "r") #Opens the file
+        
+        def get_num_lines(path): #function to find out file size for progress bar
+            fp = open(path, "r+")
+            buf = mmap.mmap(fp.fileno(), 0)
+            lines = 0
+            while buf.readline():
+                lines += 1
+            return lines
 
-        with file as f:
-            for line in f:
+        with open(path) as file: #opens the file
+            for line in tqdm(file, total=get_num_lines(path)): #adds a progress bar
                 if len(teksti) < 100000:
                     teksti.append(line)
-
-
 
         text_string = "".join(teksti)
         documents = text_string.split("</article>") #splits the file into a list at </article>
