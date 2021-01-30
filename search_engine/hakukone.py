@@ -20,12 +20,18 @@ def main():
         path = input("Please input file path: ")
         file = open(path, "r") #Opens the file
 
-        for line in file:           #because the file is massive,
+        with file as f:
+            for line in f:
+                if len(teksti) < 100000:
+                    teksti.append(line)
+
+
+        #for line in file:           #because the file is massive,
                                     #this is better than read(),
                                     #as it doesn't store the whole
                                     #thing into memory
-            if len(teksti) < 1000:
-                teksti.append(line)
+         #   if len(teksti) < 1000:
+          #      teksti.append(line)
 
         #file_variable = file.read() #Reads the contents(dead code)
 
@@ -68,7 +74,7 @@ def main():
                 hits_matrix = eval(rewrite_query(query))
                 hits_list = list(hits_matrix.nonzero()[1])
                 for i, doc_idx in enumerate(hits_list[0:9]):
-                    print("Matching doc #{:d}: {:s}".format(i, documents[doc_idx]))
+                    print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
                     print()
 
             except KeyError:
