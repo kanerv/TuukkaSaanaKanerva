@@ -27,14 +27,6 @@ def main():
                     teksti.append(line)
 
 
-        #for line in file:           #because the file is massive,
-                                    #this is better than read(),
-                                    #as it doesn't store the whole
-                                    #thing into memory
-         #   if len(teksti) < 1000:
-          #      teksti.append(line)
-
-        #file_variable = file.read() #Reads the contents(dead code)
 
         text_string = "".join(teksti)
         documents = text_string.split("</article>") #splits the file into a list at </article>
@@ -86,6 +78,7 @@ def main():
         while query != "":
             print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
             query = input("Enter a search term: ")
+            query = query.lower()
             if query != "":
                 test_query(query)
             else:
