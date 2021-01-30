@@ -67,6 +67,12 @@ def main():
                 hits_list = list(hits_matrix.nonzero()[1])
                 if len(hits_list) == 0:
                     print("Search term not found. There were no matching articles.")
+                elif len(hits_list) == 1:
+                    print("Your search term(s) appeared in " + str(len(hits_list)) + " article. Here is a preview of that article:")
+                    for i, doc_idx in enumerate(hits_list[0:10]):
+                        print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
+                        print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
+                        print()
                 elif len(hits_list) > 10:
                     print("Your search term(s) appeared in " + str(len(hits_list)) + " articles. Here is a preview of the first ten articles:")
                     for i, doc_idx in enumerate(hits_list[0:10]):
