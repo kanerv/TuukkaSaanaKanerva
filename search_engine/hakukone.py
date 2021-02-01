@@ -101,7 +101,9 @@ def main():
             print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
             query = input("Enter a search term: ")
             query = query.lower()
-            if query != "":
+            if re.match(r'\w+\s(NOT|not)\s\w+', query):  # Prints an error message if the user enters a search like 'word NOT word'
+                print(colored("Parameter not used correctly, try using 'AND NOT' instead of 'NOT'", "red"))
+            elif query != "":
                 test_query(query)
             else:
                 print("You did not enter a query, bye!")
