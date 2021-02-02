@@ -36,8 +36,6 @@ def main():
 
         text_string = "".join(teksti)
         documents = text_string.split("</article>") #splits the file into a list at </article>
-        file.close()
-
         
         cv = CountVectorizer(lowercase=True, binary=True, token_pattern=pattern)
         global dense_matrix, sparse_td_matrix,td_matrix, t2i
