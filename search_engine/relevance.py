@@ -54,19 +54,27 @@ def main():
             try:
                 hits_list = np.array(tf_matrix[t2i[query]])[0]
                 hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
-                print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
+                #print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
 
                 ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
-                print("Ranked (hits, doc_idx) tuples:", ranked_hits_and_doc_ids)
+                #print("Ranked (hits, doc_idx) tuples:", ranked_hits_and_doc_ids)
 
-                print("\nMatched the following documents, ranked highest relevance first:")
-                for hits, i in ranked_hits_and_doc_ids:
-                    print("Score of " + query + " is {:.4f} in document: {:.50s}".format(hits, documents[i]))
+                #print("\nMatched the following documents, ranked highest relevance first:")
+                #for hits, i in ranked_hits_and_doc_ids:
+                    #print("Score of " + query + " is {:.4f} in document: {:.50s}".format(hits, documents[i]))
 
-                print("Hits:", hits_list)
+                #cosine similarity:
+                query_vec = tfv.transform([query]).todense()
+                scores = np.dot(query_vec, tf_matrix)
+                print("The documents have the following cosine similarities to the query:")
+                ranked_scores_and_doc_ids = \
+                sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
-               
-                
+                for score, i in ranked_scores_and_doc_ids:
+                    #print("document:", documents[i]
+                    snippet = str(documents[i]).find("amsterdam")
+                    print("snippet: ", snippet)
+                    print("The score of " + query + " is {:.4f} in document: {:s}".format(score, documents[i]))
                 
             except KeyError:
                 print("Search term not found. No Matching doc.")         
@@ -74,12 +82,10 @@ def main():
         query = "?"
         while query != "":
             print(colored("We are ready to search!", "green"))
-            print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
+            #print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
             query = input("Enter a search term: ")
             query = query.lower()
-            if re.match(r'\w+\s(NOT|not)\s\w+', query):  # Prints an error message if the user enters a search like 'word NOT word'
-                print(colored("Parameter not used correctly, try using 'AND NOT' instead of 'NOT'", "red"))
-            elif query != "":
+            if query != "":
                 test_query(query)
             else:
                 print("You did not enter a query, bye!")
