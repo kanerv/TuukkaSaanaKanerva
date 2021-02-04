@@ -45,8 +45,9 @@ def main():
         terms = tfv.get_feature_names()
         t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
 
-        def rewrite_query(query): # rewrite every token in the query
-            return " ".join(rewrite_token(t) for t in query.split())
+        #def rewrite_query(query): # rewrite every token in the query
+        #    print(" ".join(rewrite_token(t) for t in query.split()))
+        #    return " ".join(rewrite_token(t) for t in query.split())
 
         def test_query(query):
             print("Query: '" + query + "'")
