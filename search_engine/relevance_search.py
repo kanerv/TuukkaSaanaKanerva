@@ -53,11 +53,21 @@ def main():
 
             try:
                 hits_list = np.array(tf_matrix[t2i[query]])[0]
+                hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
+                print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
+
+                ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
+                print("Ranked (hits, doc_idx) tuples:", ranked_hits_and_doc_ids)
+
+                print("\nMatched the following documents, ranked highest relevance first:")
+                for hits, i in ranked_hits_and_doc_ids:
+                    print("Score of " + query + " is {:.4f} in document: {:.10s}".format(hits, documents[i]))
 
                 print("Hits:", hits_list)
 
                 for i, nhits in enumerate(hits_list):
-                    print("Example occurs", nhits, "time(s) in document:", documents[i])
+                    if nhits > 0.00:
+                        print("Example occurs", nhits, "time(s) in document:", documents[i])
 
                 nhits_and_doc_ids = [ (nhits, i) for i, nhits in enumerate(hits_list) if nhits > 0 ]
                 print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
