@@ -1,8 +1,9 @@
-import re, fileinput, mmap
+import re, fileinput, mmap, nltk
 from tqdm import tqdm
 from termcolor import colored
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
+from nltk.stem.snowball import SnowballStemmer
 
 #########################################
 #This program is a search engine        #
@@ -29,6 +30,7 @@ def main():
             while buf.readline():
                 lines += 1
             return lines
+        
 
         with open(path) as file: #opens the file
             for line in tqdm(file, total=get_num_lines(path)): #adds a progress bar
@@ -36,8 +38,16 @@ def main():
                     teksti.append(line)
 
         text_string = "".join(teksti)
-        documents = text_string.split("</article>") #splits the file into a list at </article>
         
+        # TRIED TO ADD A STEMMER BUT NOT REALLY WORKING YET, DELETE THE FOLLOWING PARTS IF NOT NEEDED
+        #stemmer = SnowballStemmer("english")
+        #stemmed_text = stemmer.stem(text_string)
+        #documents = stemmed_text.split("</article>") #splits the file into a list at </article>
+        #print(documents[1])
+
+        documents = text_string.split("</article>") #splits the file into a list at </article>
+
+    
         tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
         global tf_matrix, t2i
         tf_matrix = tfv.fit_transform(documents).T.todense()
