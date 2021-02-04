@@ -61,23 +61,12 @@ def main():
 
                 print("\nMatched the following documents, ranked highest relevance first:")
                 for hits, i in ranked_hits_and_doc_ids:
-                    print("Score of " + query + " is {:.4f} in document: {:.10s}".format(hits, documents[i]))
+                    print("Score of " + query + " is {:.4f} in document: {:.50s}".format(hits, documents[i]))
 
                 print("Hits:", hits_list)
 
-                for i, nhits in enumerate(hits_list):
-                    if nhits > 0.00:
-                        print("Example occurs", nhits, "time(s) in document:", documents[i])
-
-                nhits_and_doc_ids = [ (nhits, i) for i, nhits in enumerate(hits_list) if nhits > 0 ]
-                print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
-
-                ranked_nhits_and_doc_ids = sorted(nhits_and_doc_ids, reverse=True)
-                print("Ranked (hits, doc_idx) tuples:", ranked_hits_and_doc_ids)
-
-                print("\nMatched the following documents, ranked highest relevance first:")
-                for hits, i in ranked_hits_and_doc_ids:
-                    print("Score of 'silly example' is {:.4f} in document: {:s}".format(hits, documents[i]))
+               
+                
                 
             except KeyError:
                 print("Search term not found. No Matching doc.")         
