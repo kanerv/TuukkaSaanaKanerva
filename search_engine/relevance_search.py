@@ -1,12 +1,13 @@
-from sklearn.feature_extraction.text import CountVectorizer
 import re, fileinput, mmap
 from tqdm import tqdm
 from termcolor import colored
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
 
 #########################################
 #This program is a search engine        #
 #created for Building NLP Apllications  #
-#week 2 assignment.                     #
+#week 3 assignment.                     #
 #########################################
 
 def main():
@@ -37,28 +38,12 @@ def main():
         text_string = "".join(teksti)
         documents = text_string.split("</article>") #splits the file into a list at </article>
         
-        cv = CountVectorizer(lowercase=True, binary=True, token_pattern=pattern)
-        global dense_matrix, sparse_td_matrix,td_matrix, t2i
-        sparse_matrix = cv.fit_transform(documents)
-        dense_matrix = sparse_matrix.todense()
-        sparse_td_matrix = sparse_matrix.T.tocsr()
-        td_matrix = dense_matrix.T   # .T transposes the matrix
+        tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+        global tf_matrix, t2i
+        tf_matrix = tfv.fit_transform(documents).T.todense()
 
-        terms = cv.get_feature_names()
-        t2i = cv.vocabulary_  # shorter notation: t2i = term-to-index
-
-        # Operators and/AND, or/OR, not/NOT become &, |, 1 -
-        # Parentheses are left untouched
-        # Everything else interpreted as a term and fed through td_matrix[t2i["..."]]
-
-        d = {"and": "&", "AND": "&",
-            "or": "|", "OR": "|",
-            "not": "1 -", "NOT": "1 -",
-            "(": "(", ")": ")"}          # operator replacements
-               
-        def rewrite_token(t):
-            return d.get(t, 'sparse_td_matrix[t2i["{:s}"]].todense()'.format(t)) # Make retrieved rows dense
-
+        terms = tfv.get_feature_names()
+        t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
 
         def rewrite_query(query): # rewrite every token in the query
             return " ".join(rewrite_token(t) for t in query.split())
@@ -67,29 +52,23 @@ def main():
             print("Query: '" + query + "'")
 
             try:
-                hits_matrix = eval(rewrite_query(query))
-                hits_list = list(hits_matrix.nonzero()[1])
-                if len(hits_list) == 0:
-                    print("Search term not found. There were no matching articles.")
-                elif len(hits_list) == 1:
-                    print("Your search term(s) appeared in " + str(len(hits_list)) + " article. Here is a preview of that article:")
-                    for i, doc_idx in enumerate(hits_list[0:10]):
-                        print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
-                        print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
-                        print()
-                elif len(hits_list) > 10:
-                    print("Your search term(s) appeared in " + str(len(hits_list)) + " articles. Here is a preview of the first ten articles:")
-                    for i, doc_idx in enumerate(hits_list[0:10]):
-                        print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
-                        print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
-                        print()
-                else:
-                    print("Your search term(s) appeared in " + str(len(hits_list)) + " articles. Here is a preview of all the articles:")
-                    for i, doc_idx in enumerate(hits_list[0:10]):
-                        print (colored("\u2588\u2588  MATCH  \u2588\u2588", "green"))
-                        print("Matching doc #{:d}: {:.1000}".format(i, documents[doc_idx]))
-                        print()
+                hits_list = np.array(tf_matrix[t2i[query]])[0]
 
+                print("Hits:", hits_list)
+
+                for i, nhits in enumerate(hits_list):
+                    print("Example occurs", nhits, "time(s) in document:", documents[i])
+
+                nhits_and_doc_ids = [ (nhits, i) for i, nhits in enumerate(hits_list) if nhits > 0 ]
+                print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
+
+                ranked_nhits_and_doc_ids = sorted(nhits_and_doc_ids, reverse=True)
+                print("Ranked (hits, doc_idx) tuples:", ranked_hits_and_doc_ids)
+
+                print("\nMatched the following documents, ranked highest relevance first:")
+                for hits, i in ranked_hits_and_doc_ids:
+                    print("Score of 'silly example' is {:.4f} in document: {:s}".format(hits, documents[i]))
+                
             except KeyError:
                 print("Search term not found. No Matching doc.")         
 
