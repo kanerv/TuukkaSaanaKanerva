@@ -68,13 +68,14 @@ def main():
                 scores = np.dot(query_vec, tf_matrix)
                 print("The documents have the following cosine similarities to the query:")
                 ranked_scores_and_doc_ids = \
-                sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
+                    sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
                 for score, i in ranked_scores_and_doc_ids:
+                    #Commented parts trying to figure out how to print the part of the article where the query word is
                     #print("document:", documents[i]
-                    snippet = str(documents[i]).find("amsterdam")
-                    print("snippet: ", snippet)
-                    print("The score of " + query + " is {:.4f} in document: {:s}".format(score, documents[i]))
+                    #snippet = str(documents[i]).find("amsterdam")
+                    #print("snippet: ", snippet)
+                    print("The score of " + query + " is {:.4f} in document: {:.100s}".format(score, documents[i]))
                 
             except KeyError:
                 print("Search term not found. No Matching doc.")         
