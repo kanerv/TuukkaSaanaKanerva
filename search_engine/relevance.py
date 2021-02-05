@@ -49,7 +49,7 @@ def main():
 
     
         tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
-        global tf_matrix, t2i
+        global tf_matrix, terms, t2i
         tf_matrix = tfv.fit_transform(documents).T.todense()
 
         terms = tfv.get_feature_names()
@@ -89,15 +89,40 @@ def main():
                     print("The score of " + query + " is {:.4f} in document: {:.100s}".format(score, documents[i]))
                 
             except KeyError:
-                print("Search term not found. No Matching doc.")         
+                print("Search term not found. No Matching doc.")
+                
+
+        def test_multiword_query(query):                #TRYING TO ENABLE MULTI-WORD SEARCHES HERE, IF YOU FIGURE OUT A WAY FEEL FREE TO DELETE
+            print("Query: '" + query + "'")
+            tfv_ngram = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(1,3))
+            tf_matrix_ngram = tfv_ngram.fit_transform(documents).T.todense()
+
+            try:
+                hits_list = np.array(tf_matrix[t2i[query]])[0]
+                hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
+                ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
+
+                #cosine similarity:
+                query_vec = tfv.transform([query]).todense()
+                scores = np.dot(query_vec, tf_matrix)
+                print("The documents have the following cosine similarities to the query:")
+                ranked_scores_and_doc_ids = \
+                    sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
+
+                for score, i in ranked_scores_and_doc_ids:
+                    print("The score of " + query + " is {:.4f} in document: {:.100s}".format(score, documents[i]))
+                
+            except KeyError:
+                print("Search term not found. No Matching doc.")
 
         query = "?"
         while query != "":
             print(colored("We are ready to search!", "green"))
-            #print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
             query = input("Enter a search term: ")
             query = query.lower()
-            if query != "":
+            if re.match(r'\w+ \w+ ?(\w+)?', query):    #Recognizes multi-word queries of two or three words
+                test_multiword_query(query)
+            elif query != "":
                 test_query(query)
             else:
                 print("You did not enter a query, bye!")
