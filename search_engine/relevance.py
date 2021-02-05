@@ -97,7 +97,7 @@ def main():
             #TRYING TO ENABLE MULTI-WORD SEARCHES HERE, IF YOU FIGURE OUT A WAY FEEL FREE TO CHANGE OR DELETE THIS FUNCTION
             #I basically just copied the function from test_query but added ngram_range as a parametre, it doesn't really seem to be working tho
             print("Query: '" + query + "'")
-            tfv_ngram = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(1,3))
+            tfv_ngram = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(2,3))
             tf_matrix_ngram = tfv_ngram.fit_transform(documents).T.todense()
 
             try:
