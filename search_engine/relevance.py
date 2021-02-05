@@ -92,19 +92,22 @@ def main():
                 print("Search term not found. No Matching doc.")
                 
 
-        def test_multiword_query(query):                #TRYING TO ENABLE MULTI-WORD SEARCHES HERE, IF YOU FIGURE OUT A WAY FEEL FREE TO DELETE
+        def test_multiword_query(query):
+
+            #TRYING TO ENABLE MULTI-WORD SEARCHES HERE, IF YOU FIGURE OUT A WAY FEEL FREE TO CHANGE OR DELETE THIS FUNCTION
+            #I basically just copied the function from test_query but added ngram_range as a parametre, it doesn't really seem to be working tho
             print("Query: '" + query + "'")
             tfv_ngram = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(1,3))
             tf_matrix_ngram = tfv_ngram.fit_transform(documents).T.todense()
 
             try:
-                hits_list = np.array(tf_matrix[t2i[query]])[0]
+                hits_list = np.array(tf_matrix_ngram[t2i[query]])[0]
                 hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
                 ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
 
                 #cosine similarity:
-                query_vec = tfv.transform([query]).todense()
-                scores = np.dot(query_vec, tf_matrix)
+                query_vec = tfv_ngram.transform([query]).todense()
+                scores = np.dot(query_vec, tf_matrix_ngram)
                 print("The documents have the following cosine similarities to the query:")
                 ranked_scores_and_doc_ids = \
                     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
