@@ -79,7 +79,7 @@ def main():
                     snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
                     header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
 
-                    print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index-20:snippet_index+40]))
+                    print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
                     
             except KeyError:
                 print("Search term not found. No Matching doc.")
