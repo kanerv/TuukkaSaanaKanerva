@@ -28,17 +28,20 @@ def main():
         text_string = file_variable.read()
 
         tokens = [w for w in nltk.word_tokenize(text_string)]
-        #documents = text_string.split("</article>") #splits the file into a list at </article>
 
         snowball = SnowballStemmer("english")
         for w in tokens:
             x = snowball.stem(w)
+            x = x + "_s"
             stem_words.append(x)
         stemmed_text = " ".join(stem_words)
-        documents_pre = stemmed_text.split("< /articl >")
+        documents_pre = stemmed_text.split("<_s /articl_s >_s")
+
         for i in documents_pre:
-            i = re.sub("< articl name= ", "", i)
+            i = re.sub("<_s articl_s name=_s ''_s", "", i)
+            i = re.sub("''_s >", "", i)
             documents.append(i)
+            
         tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
         global tf_matrix, t2i, stems_matrix
         tf_matrix = tfv.fit_transform(documents).T.todense()
