@@ -19,7 +19,7 @@ def main():
         teksti = []
         documents = []
 
-        pattern = r'(?u)\b\w+\b' #a new regex that takes into account tokens comprised of a singe alphanumerical character
+        pattern = r'(?u)\b\w+\b' #a regex that takes into account tokens comprised of a singe alphanumerical character
         print(colored("This is TuukkaSaanaKanerva's search engine.", "green"))
         path = input("Please input file path: ")
         
@@ -38,34 +38,25 @@ def main():
                     teksti.append(line)
 
         text_string = "".join(teksti)
-        
-        # TRIED TO ADD A STEMMER BUT NOT REALLY WORKING YET, DELETE THE FOLLOWING PARTS IF NOT NEEDED
-        #stemmer = SnowballStemmer("english")
-        #stemmed_text = stemmer.stem(text_string)
-        #documents = stemmed_text.split("</article>") #splits the file into a list at </article>
-        #print(documents[1])
 
         documents_pre = text_string.split("</article>") #splits the file into a list at </article>
         for i in documents_pre:
             i = re.sub("<article name=", "", i)
             i = re.sub(">", "", i)
             documents.append(i)
-    
-        tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
-        global tf_matrix, terms, t2i
-        tf_matrix = tfv.fit_transform(documents).T.todense()
-
-        terms = tfv.get_feature_names()
-        t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
-
-        #def rewrite_query(query): # rewrite every token in the query
-        #    print(" ".join(rewrite_token(t) for t in query.split()))
-        #    return " ".join(rewrite_token(t) for t in query.split())
+            
 
         def test_query(query):
             print("Query: '" + query + "'")
 
             try:
+                """Ceates a matric and term-dictionary index"""
+                tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+                global tf_matrix, terms, t2i
+                tf_matrix = tfv.fit_transform(documents).T.todense()
+                terms = tfv.get_feature_names()
+                t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
+
                 hits_list = np.array(tf_matrix[t2i[query]])[0]
                 hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
                 #print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
@@ -85,10 +76,9 @@ def main():
                     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
                 for score, i in ranked_scores_and_doc_ids:
-                    for score, i in ranked_scores_and_doc_ids:
-                        snip = documents[i]
-                        find_first = documents[i].find(query)
-                        print("The score of " + query + " is {:.4f} in document: {:.15s}. Here is a snippet: {:s}\n***".format(score, documents[i], snip[find_first:find_first+50]))
+                    snip = documents[i]
+                    find_first = documents[i].find(query)
+                    print("The score of " + query + " is {:.4f} in document: {:.15s}. Here is a snippet: {:s}\n***".format(score, documents[i], snip[find_first:find_first+50]))
                     
             except KeyError:
                 print("Search term not found. No Matching doc.")
@@ -103,6 +93,13 @@ def main():
             tf_matrix_ngram = tfv_ngram.fit_transform(documents).T.todense()
 
             try:
+
+                tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+                global tf_matrix, terms, t2i
+                tf_matrix = tfv.fit_transform(documents).T.todense()
+                terms = tfv.get_feature_names()
+                t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
+                
                 hits_list = np.array(tf_matrix_ngram[t2i[query]])[0]
                 hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
                 ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
@@ -120,12 +117,42 @@ def main():
             except KeyError:
                 print("Search term not found. No Matching doc.")
 
+        def stem(documents_in):
+            stem_words = []
+            documents_pre = []
+            documents_out = []
+            tokenized = []
+        
+            tokens = [w for w in nltk.word_tokenize(text_string)] #tokenises the text
+
+            """this stems the tokens and creates a list of stemmed words"""
+            snowball = SnowballStemmer("english")
+            for w in tokens:
+                 x = snowball.stem(w)
+                 x = x + "_s"
+                 stem_words.append(x)
+            stemmed_text = " ".join(stem_words)
+            documents_pre = stemmed_text.split("<_s /articl_s >_s")
+
+            """This cleans the list from xml code in headers and appends stemmed tokens to documents"""
+            for i in documents_pre:
+                i = re.sub("<_s articl_s name=_s ''_s", "", i)
+                i = re.sub("''_s >", "", i)
+                documents_out.append(i)
+
+            return documents_out
+
         query = "?"
         while query != "":
             print(colored("We are ready to search!", "green"))
+            print("If you want search with a stem, please use '_s' at the end of the stem.")
             query = input("Enter a search term: ")
             query = query.lower()
-            if re.match(r'\w+ \w+ ?(\w+)?', query):    #Recognizes multi-word queries of two or three words
+            if re.match(r'\w+_s\b', query):             #Recognizes stem searches
+                print("Searching a stem...")
+                documents = stem(documents)
+                test_query(query)
+            elif re.match(r'\w+ \w+ ?(\w+)?', query):   #Recognizes multi-word queries of two or three words
                 test_multiword_query(query)
             elif query != "":
                 test_query(query)
