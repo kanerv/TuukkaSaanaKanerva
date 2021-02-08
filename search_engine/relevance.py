@@ -137,8 +137,8 @@ def main():
 
             """This cleans the list from xml code in headers and appends stemmed tokens to documents"""
             for i in documents_pre:
-                i = re.sub("<_s articl_s name=_s ''_s", "", i)
-                i = re.sub("''_s >", "", i)
+                i = re.sub("<_s articl_s name=_s ''_s", "\"", i)
+                i = re.sub("''_s >", "\"", i)
                 documents_out.append(i)
 
             return documents_out
