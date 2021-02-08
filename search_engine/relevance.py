@@ -45,8 +45,11 @@ def main():
         #documents = stemmed_text.split("</article>") #splits the file into a list at </article>
         #print(documents[1])
 
-        documents = text_string.split("</article>") #splits the file into a list at </article>
-
+        documents_pre = text_string.split("</article>") #splits the file into a list at </article>
+        for i in documents_pre:
+            i = re.sub("<article name=", "", i)
+            i = re.sub(">", "", i)
+            documents.append(i)
     
         tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
         global tf_matrix, terms, t2i
@@ -82,12 +85,11 @@ def main():
                     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
                 for score, i in ranked_scores_and_doc_ids:
-                    #Commented parts trying to figure out how to print the part of the article where the query word is
-                    #print("document:", documents[i]
-                    #snippet = str(documents[i]).find("amsterdam")
-                    #print("snippet: ", snippet)
-                    print("The score of " + query + " is {:.4f} in document: {:.100s}".format(score, documents[i]))
-                
+                    for score, i in ranked_scores_and_doc_ids:
+                        snip = documents[i]
+                        find_first = documents[i].find(query)
+                        print("The score of " + query + " is {:.4f} in document: {:.15s}. Here is a snippet: {:s}\n***".format(score, documents[i], snip[find_first:find_first+50]))
+                    
             except KeyError:
                 print("Search term not found. No Matching doc.")
                 
