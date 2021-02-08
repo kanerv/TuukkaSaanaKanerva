@@ -27,8 +27,9 @@ def main():
         file_variable = open(path, "r")
         text_string = file_variable.read()
 
-        tokens = [w for w in nltk.word_tokenize(text_string)]
+        tokens = [w for w in nltk.word_tokenize(text_string)] #tokenises the text
 
+        """this stems the tokens and creates a list of stemmed words"""
         snowball = SnowballStemmer("english")
         for w in tokens:
             x = snowball.stem(w)
@@ -37,16 +38,17 @@ def main():
         stemmed_text = " ".join(stem_words)
         documents_pre = stemmed_text.split("<_s /articl_s >_s")
 
+        """This cleans the list from xml code in headers and appends stemmed tokens to documents"""
         for i in documents_pre:
             i = re.sub("<_s articl_s name=_s ''_s", "", i)
             i = re.sub("''_s >", "", i)
             documents.append(i)
             
+
+        """Ceates a matric and term-dictionary index"""
         tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
         global tf_matrix, t2i, stems_matrix
         tf_matrix = tfv.fit_transform(documents).T.todense()
-        
-
         terms = tfv.get_feature_names()
         t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
 
@@ -89,7 +91,7 @@ def main():
         while query != "":
             print(colored("We are ready to search!", "green"))
             #print("You can use AND, OR, NOT, as parametres.\nHyphenated words are regarded as separate words.\n***\nIf you want to quit press enter.\n")
-            query = input("Enter a search term: ")
+            query = input("Enter a search term. Please use \"_s\" at the end of the stem: ")
             query = query.lower()
             if query != "":
                 test_query(query)
