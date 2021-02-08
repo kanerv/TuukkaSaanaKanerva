@@ -13,7 +13,6 @@ from nltk.stem.snowball import SnowballStemmer
 
 def main():
     
-    
 
     try:
         teksti = []
@@ -59,26 +58,28 @@ def main():
 
                 hits_list = np.array(tf_matrix[t2i[query]])[0]
                 hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
-                #print("List of tuples (hits, doc_idx) where hits > 0:", hits_and_doc_ids)
 
                 ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
-                #print("Ranked (hits, doc_idx) tuples:", ranked_hits_and_doc_ids)
-
-                #print("\nMatched the following documents, ranked highest relevance first:")
-                #for hits, i in ranked_hits_and_doc_ids:
-                    #print("Score of " + query + " is {:.4f} in document: {:.50s}".format(hits, documents[i]))
 
                 #cosine similarity:
                 query_vec = tfv.transform([query]).todense()
                 scores = np.dot(query_vec, tf_matrix)
-                print("The documents have the following cosine similarities to the query:")
+                
                 ranked_scores_and_doc_ids = \
                     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
+                print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
+
                 for score, i in ranked_scores_and_doc_ids:
-                    snip = documents[i]
-                    find_first = documents[i].find(query)
-                    print("The score of " + query + " is {:.4f} in document: {:.15s}. Here is a snippet: {:s}\n***".format(score, documents[i], snip[find_first:find_first+50]))
+                    '''Commenting out to merge, add if needed'''
+                    #snip = documents[i]
+                    #find_first = documents[i].find(query)
+                    #print("The score of " + query + " is {:.4f} in document: {:.15s}. Here is a snippet: {:s}\n***".format(score, documents[i], snip[find_first:find_first+50]))
+
+                    snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
+                    header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
+
+                    print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index-20:snippet_index+40]))
                     
             except KeyError:
                 print("Search term not found. No Matching doc.")
