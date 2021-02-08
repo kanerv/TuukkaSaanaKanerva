@@ -87,16 +87,12 @@ def main():
                 print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
 
                 for score, i in ranked_scores_and_doc_ids:
-                    snip = documents[i]
-                    find_first = documents[i].find(query)
-                    header = snip.split('"')[1]
-<<<<<<< HEAD
-                    print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: {:s}\n***".format(score, header, snip[find_first:find_first+50]))
+                    snippet_index = documents[i].lower().find(query)
+                    #find_first = snip.find(query)
+                    header = documents[i].split('"')[1]
+
+                    print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index-20:snippet_index+40]))
                     
-=======
-                    print("The score of " + query + " is {:.4f} in document named: {:s}. Here is a snippet: {:s}\n***".format(score, header, snip[find_first:find_first+50]))
-                
->>>>>>> c7ed2ce5c23654a23d75d23c191192e4d309147f
             except KeyError:
                 print("Search term not found. No Matching doc.")
                 
