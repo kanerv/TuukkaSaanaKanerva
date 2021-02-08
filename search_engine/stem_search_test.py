@@ -18,8 +18,10 @@ def main():
 
     try:
         stem_words = []
+        documents_pre = []
         documents = []
         tokenized = []
+
         print(colored("This is TuukkaSaanaKanerva's search engine.", "green"))
         path = input("Please input file path: ")
         file_variable = open(path, "r")
@@ -33,8 +35,10 @@ def main():
             x = snowball.stem(w)
             stem_words.append(x)
         stemmed_text = " ".join(stem_words)
-        documents = stemmed_text.split("< /articl >")
-    
+        documents_pre = stemmed_text.split("< /articl >")
+        for i in documents_pre:
+            i = re.sub("< articl name= ", "", i)
+            documents.append(i)
         tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
         global tf_matrix, t2i, stems_matrix
         tf_matrix = tfv.fit_transform(documents).T.todense()
@@ -73,7 +77,7 @@ def main():
                     #print("document:", documents[i]
                     #snippet = str(documents[i]).find("amsterdam")
                     #print("snippet: ", snippet)
-                    print("The score of " + query + " is {:.4f} in document: {:.100s}".format(score, documents[i]))
+                    print("The score of " + query + " is {:.4f} in document: {:.100s}\n***".format(score, documents[i]))
                 
             except KeyError:
                 print("Search term not found. No Matching doc.")         
