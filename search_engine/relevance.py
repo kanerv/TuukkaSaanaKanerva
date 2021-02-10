@@ -153,8 +153,8 @@ def main():
                 print("Searching a stem...")
                 documents = stem(documents)
                 test_query(query)
-            elif re.match(r'\w+ \w+ ?(\w+)?', query):   #Recognizes multi-word queries of two or three words
-                test_multiword_query(query)
+            #elif re.match(r'\w+ \w+ ?(\w+)?', query):   #Recognizes multi-word queries of two or three words
+                #test_multiword_query(query)
             elif query != "":
                 test_query(query)
             else:
