@@ -38,11 +38,6 @@ def main():
 
         text_string = "".join(teksti)
 
-        documents_pre = text_string.split("</article>") #splits the file into a list at </article>
-        for i in documents_pre:
-            i = re.sub("<article name=", "", i)
-            i = re.sub(">", "", i)
-            documents.append(i)
             
 
         def test_query(query):
@@ -118,13 +113,24 @@ def main():
             except KeyError:
                 print("Search term not found. No Matching doc.")
 
+        def relevance(documents_in):
+            
+            documents_pre = documents_in.split("</article>") #splits the file into a list at </article>
+            for i in documents_pre:
+                i = re.sub("<article name=", "", i)
+                i = re.sub(">", "", i)
+                documents.append(i)
+
+            return documents
+            
+
         def stem(documents_in):
             stem_words = []
             documents_pre = []
             documents_out = []
             tokenized = []
         
-            tokens = [w for w in nltk.word_tokenize(text_string)] #tokenises the text
+            tokens = [w for w in nltk.word_tokenize(documents_in)] #tokenises the text
 
             """this stems the tokens and creates a list of stemmed words"""
             snowball = SnowballStemmer("english")
@@ -151,11 +157,12 @@ def main():
             query = query.lower()
             if re.match(r'\w+_s\b', query):             #Recognizes stem searches
                 print("Searching a stem...")
-                documents = stem(documents)
+                documents = stem(text_string)
                 test_query(query)
             #elif re.match(r'\w+ \w+ ?(\w+)?', query):   #Recognizes multi-word queries of two or three words
                 #test_multiword_query(query)
             elif query != "":
+                documents = relevance(text_string)
                 test_query(query)
             else:
                 print("You did not enter a query, bye!")
