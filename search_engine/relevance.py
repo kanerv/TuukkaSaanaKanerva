@@ -67,10 +67,6 @@ def main():
 
                 for score, i in ranked_scores_and_doc_ids:
                     '''Commenting out to merge, add if needed'''
-                    #snip = documents[i]
-                    #find_first = documents[i].find(query)
-                    #print("The score of " + query + " is {:.4f} in document: {:.15s}. Here is a snippet: {:s}\n***".format(score, documents[i], snip[find_first:find_first+50]))
-
                     snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
                     header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
 
@@ -80,7 +76,7 @@ def main():
                 print("Search term not found. No Matching doc.")
                 
 
-        def test_multiword_query(query):
+        """def test_multiword_query(query):
 
             #TRYING TO ENABLE MULTI-WORD SEARCHES HERE, IF YOU FIGURE OUT A WAY FEEL FREE TO CHANGE OR DELETE THIS FUNCTION
             #I basically just copied the function from test_query but added ngram_range as a parametre, it doesn't really seem to be working tho
@@ -111,7 +107,7 @@ def main():
                     print("The score of " + query + " is {:.4f} in document: {:.100s}".format(score, documents[i]))
                 
             except KeyError:
-                print("Search term not found. No Matching doc.")
+                print("Search term not found. No Matching doc.")"""
 
         def relevance(documents_in):
             
