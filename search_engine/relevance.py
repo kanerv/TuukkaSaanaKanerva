@@ -166,7 +166,7 @@ def main():
                 for article in documents:               #Iterates through the articles
                     words = article.split()
                     for word in words:
-                        #print(word)
+                        word = word.lower()
                         if re.match(query[:-1]+".+", word):    #Finds all possible queries matching the initial query
                             while re.match(r'\W', word[-1]):     #gets rid of punctuation at the end of word    
                                     word = word[:-1]
