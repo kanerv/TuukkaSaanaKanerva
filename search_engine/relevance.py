@@ -41,7 +41,8 @@ def main():
             
 
         def test_query(query):
-            print("Query: '" + query + "'")
+            
+            print(colored("Query: '" + query + "'", "blue"))
 
             try:
                 """Ceates a matric and term-dictionary index"""
@@ -149,6 +150,8 @@ def main():
         while query != "":
             print(colored("We are ready to search!", "green"))
             print("If you want search with a stem, please use '_s' at the end of the stem.")
+            print("If you want to search with wildcards, please use '*' at the end of the query.")
+            print("Or hit enter to quit.")
             query = input("Enter a search term: ")
             query = query.lower()
             if re.match(r'\w+_s\b', query):             #Recognizes stem searches
@@ -157,6 +160,24 @@ def main():
                 test_query(query)
             #elif re.match(r'\w+ \w+ ?(\w+)?', query):   #Recognizes multi-word queries of two or three words
                 #test_multiword_query(query)
+            elif re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
+                documents = relevance(text_string)
+                queries = []
+                for article in documents:               #Iterates through the articles
+                    words = article.split()
+                    for word in words:
+                        #print(word)
+                        if re.match(query[:-1]+".+", word):    #Finds all possible queries matching the initial query
+                            while re.match(r'\W', word[-1]):     #gets rid of punctuation at the end of word    
+                                    word = word[:-1]
+                            while re.match(r'\W', word[0]):      #gets rid of punctuation in the beginning of word
+                                    word = word[1:]
+                            if word not in queries:             #saves all matching queries
+                                queries.append(word)
+                for query in queries:
+                    #print(query)
+                    test_query(query)                   #Searches with all queries separately
+
             elif query != "":
                 documents = relevance(text_string)
                 test_query(query)
