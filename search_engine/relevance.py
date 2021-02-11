@@ -16,7 +16,6 @@ def main():
 
     try:
         teksti = []
-        documents = []
 
         pattern = r'(?u)\b\w+\b' #a regex that takes into account tokens comprised of a singe alphanumerical character
         print(colored("This is TuukkaSaanaKanerva's search engine.", "green"))
@@ -148,6 +147,7 @@ def main():
 
         query = "?"
         while query != "":
+            documents = []
             print(colored("We are ready to search!", "green"))
             print("If you want search with a stem, please use '_s' at the end of the stem.")
             print("If you want to search with wildcards, please use '*' at the end of the query.")
