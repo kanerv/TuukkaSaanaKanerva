@@ -18,6 +18,7 @@ text_string = file_variable.read()
 @app.route('/search')
 def search():
     matches = []
+    
     #Get query from URL variable
     query = request.args.get('query')
 
@@ -123,9 +124,14 @@ def test_query(query):
     print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
 
     for score, i in ranked_scores_and_doc_ids:
+        score = "{:.4f}".format(score)
         snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
-        header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
-        matches.append(header)
+        header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
+        header = str(header)
+        snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
+        snippet = str(snippet)
+        line = "The score of " + query + " is "+ score + " in the document named: " + header + ". Here is a snippet: " + snippet
+        matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
     
     return matches
