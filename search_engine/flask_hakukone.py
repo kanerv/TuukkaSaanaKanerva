@@ -13,18 +13,17 @@ documents = []
 file_variable = open("enwiki-20181001-corpus.100-articles.txt", "r+")
 text_string = file_variable.read()
 
-example_data = documents
 
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
-
+    matches = []
     #Get query from URL variable
     query = request.args.get('query')
 
     #Initialize list of matches
-    matches = []
-
+    #matches = []
+    
     #If query exists (i.e. is not None)
     if query:
         query = query.lower()
@@ -101,41 +100,34 @@ def stem(documents_in):
     return documents_out
 
 def test_query(query):
+    matches = []
+    """Ceates a matric and term-dictionary index"""
+    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+    global tf_matrix, terms, t2i
+    tf_matrix = tfv.fit_transform(documents).T.todense()
+    terms = tfv.get_feature_names()
+    t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
+
+    hits_list = np.array(tf_matrix[t2i[query]])[0]
+    hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
+
+    ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
+
+    #cosine similarity:
+    query_vec = tfv.transform([query]).todense()
+    scores = np.dot(query_vec, tf_matrix)
             
-    print(colored("Query: '" + query + "'", "blue"))
+    ranked_scores_and_doc_ids = \
+        sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
-    try:
-        """Ceates a matric and term-dictionary index"""
-        tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
-        global tf_matrix, terms, t2i
-        tf_matrix = tfv.fit_transform(documents).T.todense()
-        terms = tfv.get_feature_names()
-        t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
+    print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
 
-        hits_list = np.array(tf_matrix[t2i[query]])[0]
-        hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
+    for score, i in ranked_scores_and_doc_ids:
+        snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
+        header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
+        matches.append(header)
+        #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
+    
+    return matches
 
-        ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
-
-        #cosine similarity:
-        query_vec = tfv.transform([query]).todense()
-        scores = np.dot(query_vec, tf_matrix)
-                
-        ranked_scores_and_doc_ids = \
-            sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
-
-        print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
-
-        for score, i in ranked_scores_and_doc_ids:
-            snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
-            header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
-
-
-            #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
-        matches = "muuttuja"
-        return matches
-
-                    
-    except KeyError:
-        print("Search term not found. No Matching doc.")
 
