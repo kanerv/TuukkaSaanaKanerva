@@ -15,44 +15,22 @@ from nltk.stem.snowball import SnowballStemmer
 #Initialize Flask instance
 app = Flask(__name__)
 
-example_data = [
-    {'name': 'Cat sleeping on a bed', 'source': 'cat.jpg'},
-    {'name': 'Misty forest', 'source': 'forest.jpg'},
-    {'name': 'Bonfire burning', 'source': 'fire.jpg'},
-    {'name': 'Old library', 'source': 'library.jpg'},
-    {'name': 'Sliced orange', 'source': 'orange.jpg'}
-    ]
 
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
-def search():
-
-    #Get query from URL variable
-    query = request.args.get('query')
-
-    #Initialize list of matches
-    matches = []
-
-    #If query exists (i.e. is not None)
-    if query:
-        #Look at each entry in the example data
-        for entry in example_data:
-            #If an entry name contains the query, add the entry to matches
-            if query.lower() in entry['name'].lower():
-                matches.append(entry)
-
-    #Render index.html with matches variable
-    return render_template('index.html', matches=matches)
-
 def main():
+
+
     
+
+
 
     try:
         teksti = []
 
         pattern = r'(?u)\b\w+\b' #a regex that takes into account tokens comprised of a singe alphanumerical character
         print(colored("This is TuukkaSaanaKanerva's search engine.", "green"))
-        path = input("Please input file path: ")
+        path = "enwiki-20181001-corpus.100-articles.txt"
         
         def get_num_lines(path): #function to find out file size for progress bar
             fp = open(path, "r+")
@@ -72,7 +50,7 @@ def main():
 
             
 
-        def test_query(query):
+        def search(query):
             
             print(colored("Query: '" + query + "'", "blue"))
 
@@ -104,43 +82,12 @@ def main():
                     header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
 
                     print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
-                    
+                #Render index.html with matches variable
+                return render_template('index.html', matches=amsterdam)                    
+            
             except KeyError:
                 print("Search term not found. No Matching doc.")
                 
-
-        """def test_multiword_query(query):
-
-            #TRYING TO ENABLE MULTI-WORD SEARCHES HERE, IF YOU FIGURE OUT A WAY FEEL FREE TO CHANGE OR DELETE THIS FUNCTION
-            #I basically just copied the function from test_query but added ngram_range as a parametre, it doesn't really seem to be working tho
-            print("Query: '" + query + "'")
-            tfv_ngram = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(2,3))
-            tf_matrix_ngram = tfv_ngram.fit_transform(documents).T.todense()
-
-            try:
-
-                tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
-                global tf_matrix, terms, t2i
-                tf_matrix = tfv.fit_transform(documents).T.todense()
-                terms = tfv.get_feature_names()
-                t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
-                
-                hits_list = np.array(tf_matrix_ngram[t2i[query]])[0]
-                hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
-                ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
-
-                #cosine similarity:
-                query_vec = tfv_ngram.transform([query]).todense()
-                scores = np.dot(query_vec, tf_matrix_ngram)
-                print("The documents have the following cosine similarities to the query:")
-                ranked_scores_and_doc_ids = \
-                    sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
-
-                for score, i in ranked_scores_and_doc_ids:
-                    print("The score of " + query + " is {:.4f} in document: {:.100s}".format(score, documents[i]))
-                
-            except KeyError:
-                print("Search term not found. No Matching doc.")"""
 
         def relevance(documents_in):
             
@@ -181,16 +128,15 @@ def main():
         query = "?"
         while query != "":
             documents = []
-            print(colored("We are ready to search!", "green"))
-            print("If you want search with a stem, please use '_s' at the end of the stem.")
-            print("If you want to search with wildcards, please use '*' at the end of the query.")
-            print("Or hit enter to quit.")
-            query = input("Enter a search term: ")
+            
+            #Get query from URL variable
+            query = "amsterdam"
+            #request.args.get('query')
             query = query.lower()
             if re.match(r'\w+_s\b', query):             #Recognizes stem searches
                 print("Searching a stem...")
                 documents = stem(text_string)
-                test_query(query)
+                search(query)
             #elif re.match(r'\w+ \w+ ?(\w+)?', query):   #Recognizes multi-word queries of two or three words
                 #test_multiword_query(query)
             elif re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
@@ -209,11 +155,11 @@ def main():
                                 queries.append(word)
                 for query in queries:
                     #print(query)
-                    test_query(query)                   #Searches with all queries separately
+                    search(query)                   #Searches with all queries separately
 
             elif query != "":
                 documents = relevance(text_string)
-                test_query(query)
+                search(query)
             else:
                 print("You did not enter a query, bye!")
 
