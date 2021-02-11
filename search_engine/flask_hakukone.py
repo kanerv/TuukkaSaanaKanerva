@@ -1,4 +1,10 @@
 from flask import Flask, render_template, request
+import re, fileinput, mmap, nltk
+from tqdm import tqdm
+from termcolor import colored
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+from nltk.stem.snowball import SnowballStemmer
 
 #Initialize Flask instance
 app = Flask(__name__)
@@ -25,7 +31,7 @@ def search():
         if re.match(r'\w+_s\b', query):             #Recognizes stem searches
             print("Searching a stem...")
             documents = stem(text_string)
-            test_query(query)
+            matches = test_query(query)
 
         elif re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
             documents = relevance(text_string)
@@ -43,17 +49,17 @@ def search():
                             queries.append(word)
             for query in queries:
                 #print(query)
-                test_query(query)                   #Searches with all queries separately
+                matches = test_query(query)                   #Searches with all queries separately
 
         elif query != "":
             documents = relevance(text_string)
-            test_query(query)
+            matches = test_query(query)
         
         #Look at each entry in the example data
-        for entry in example_data:
+        #for entry in example_data:
             #If an entry name contains the query, add the entry to matches
-            if query.lower() in entry['name'].lower():
-                matches.append(entry)
+            #if query.lower() in entry['name'].lower():
+                #matches.append(entry)
 
     #Render index.html with matches variable
     return render_template('index.html', matches=matches)
@@ -124,7 +130,11 @@ def test_query(query):
             snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
             header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
 
-            print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
+
+            #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
+        matches = "muuttuja"
+        return matches
+
                     
     except KeyError:
         print("Search term not found. No Matching doc.")
