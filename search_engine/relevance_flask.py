@@ -21,7 +21,7 @@ example_data = [
     {'name': 'Bonfire burning', 'source': 'fire.jpg'},
     {'name': 'Old library', 'source': 'library.jpg'},
     {'name': 'Sliced orange', 'source': 'orange.jpg'}
-]
+    ]
 
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
@@ -43,7 +43,6 @@ def search():
 
     #Render index.html with matches variable
     return render_template('index.html', matches=matches)
-
 
 def main():
     
