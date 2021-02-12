@@ -13,7 +13,9 @@
             <!--Go through each item in the "matches" variable sent from
                 search() function in the Flask app-->
             {% for item in matches %}
+                {% if loop.index == 1 %}
                 <pre>{{ item }}</pre>
+                {% endif %}
                 <br>
             <!--End for loop-->
             {% endfor %}

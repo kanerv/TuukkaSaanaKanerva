@@ -17,7 +17,6 @@ text_string = file_variable.read()
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
-    matches = []
     
     #Get query from URL variable
     query = request.args.get('query')
@@ -133,7 +132,6 @@ def test_query(query):
         line = "The score of " + query + " is "+ score + " in the document named: " + header + ".\n" + "Here is a snippet: " + snippet
         matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
-    
     return matches
 
 
