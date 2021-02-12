@@ -29,7 +29,7 @@ def search():
         if choice == "stem":                            #(dead code)re.match(r'\w+_s\b', query):             #Recognizes stem searches
             query = query + "_s"
             documents = stem(text_string)
-            test_query(query)
+            matches = test_query(query)
 
         elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
             documents = relevance(text_string)
@@ -46,11 +46,11 @@ def search():
                         if word not in queries:             #saves all matching queries
                             queries.append(word)
             for query in queries:
-                test_query(query)                   #Searches with all queries separately
+                matches = test_query(query)                   #Searches with all queries separately
 
         elif choice ==  "exact": #!= "":
             documents = relevance(text_string)
-            test_query(query)
+            matches = test_query(query)
         
         #Look at each entry in the example data
         #for entry in example_data:
@@ -97,7 +97,6 @@ def stem(documents_in):
     return documents_out
 
 def test_query(query):
-    global matches
     matches = []
     """Ceates a matric and term-dictionary index"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
@@ -129,4 +128,4 @@ def test_query(query):
         line = "The score of " + query + " is "+ score + " in the document named: " + header + ".\n" + "Here is a snippet: " + snippet
         matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
-
+    return matches
