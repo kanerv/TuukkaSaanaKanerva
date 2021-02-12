@@ -17,20 +17,21 @@ text_string = file_variable.read()
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
+
     matches = []
     #Get query from URL variable
     query = request.args.get('query')
+    #Get choice of search engine from URL variable
     choice = request.args.get('choice')
     
     #If query exists (i.e. is not None)
     if query:
-    #    query = query.lower()
-        if choice == "stem": #re.match(r'\w+_s\b', query):             #Recognizes stem searches
+        if choice == "stem":                            #(dead code)re.match(r'\w+_s\b', query):             #Recognizes stem searches
             query = query + "_s"
             documents = stem(text_string)
             matches = test_query(query)
 
-        elif choice == "wildcard": #re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
+        elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
             documents = relevance(text_string)
             queries = []
             for article in documents:               #Iterates through the articles
@@ -45,7 +46,6 @@ def search():
                         if word not in queries:             #saves all matching queries
                             queries.append(word)
             for query in queries:
-                #print(query)
                 matches = test_query(query)                   #Searches with all queries separately
 
         elif choice ==  "exact": #!= "":
@@ -131,5 +131,4 @@ def test_query(query):
         matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
     return matches
-
 
