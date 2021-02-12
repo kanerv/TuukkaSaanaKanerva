@@ -18,7 +18,7 @@ text_string = file_variable.read()
 @app.route('/search')
 def search():
 
-    matches = []
+    
     #Get query from URL variable
     query = request.args.get('query')
     #Get choice of search engine from URL variable
@@ -29,7 +29,7 @@ def search():
         if choice == "stem":                            #(dead code)re.match(r'\w+_s\b', query):             #Recognizes stem searches
             query = query + "_s"
             documents = stem(text_string)
-            matches = test_query(query)
+            test_query(query)
 
         elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
             documents = relevance(text_string)
@@ -46,18 +46,17 @@ def search():
                         if word not in queries:             #saves all matching queries
                             queries.append(word)
             for query in queries:
-                matches = test_query(query)                   #Searches with all queries separately
+                test_query(query)                   #Searches with all queries separately
 
         elif choice ==  "exact": #!= "":
             documents = relevance(text_string)
-            matches = test_query(query)
+            test_query(query)
         
         #Look at each entry in the example data
         #for entry in example_data:
             #If an entry name contains the query, add the entry to matches
             #if query.lower() in entry['name'].lower():
                 #matches.append(entry)
-
     #Render index.html with matches variable
     return render_template('index.html', matches=matches)
 
@@ -98,6 +97,7 @@ def stem(documents_in):
     return documents_out
 
 def test_query(query):
+    global matches
     matches = []
     """Ceates a matric and term-dictionary index"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
@@ -119,7 +119,6 @@ def test_query(query):
         sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
-
     for score, i in ranked_scores_and_doc_ids:
         score = "{:.4f}".format(score)
         snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
@@ -130,5 +129,4 @@ def test_query(query):
         line = "The score of " + query + " is "+ score + " in the document named: " + header + ".\n" + "Here is a snippet: " + snippet
         matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
-    return matches
 
