@@ -98,6 +98,7 @@ def stem(documents_in):
 
 def test_query(query):
     matches = []
+    
     """Ceates a matric and term-dictionary index"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
     global tf_matrix, terms, t2i
@@ -112,11 +113,9 @@ def test_query(query):
 
     #cosine similarity:
     query_vec = tfv.transform([query]).todense()
-    scores = np.dot(query_vec, tf_matrix)
-            
+    scores = np.dot(query_vec, tf_matrix)                
     ranked_scores_and_doc_ids = \
-        sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
-
+    sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
     print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
     for score, i in ranked_scores_and_doc_ids:
         score = "{:.4f}".format(score)
