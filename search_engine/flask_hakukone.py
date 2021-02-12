@@ -92,9 +92,9 @@ def stem(documents_in):
     for i in documents_pre:
         i = re.sub("<_s articl_s name=_s ''_s", "\"", i)
         i = re.sub("''_s >", "\"", i)
-        documents_out.append(i)
+        documents.append(i)
 
-    return documents_out
+    return documents
 
 def test_query(query):
     matches = []
