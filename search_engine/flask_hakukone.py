@@ -17,7 +17,7 @@ text_string = file_variable.read()
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
-
+    matches = []
     
     #Get query from URL variable
     query = request.args.get('query')
