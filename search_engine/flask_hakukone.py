@@ -17,7 +17,7 @@ text_string = file_variable.read()
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
-    
+    matches = []
     #Get query from URL variable
     query = request.args.get('query')
 
@@ -61,7 +61,7 @@ def search():
                 #matches.append(entry)
 
     #Render index.html with matches variable
-    return render_template('index.html', matches=query)
+    return render_template('index.html', matches=matches)
 
 def relevance(documents_in):
             
