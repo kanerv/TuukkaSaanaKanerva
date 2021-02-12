@@ -70,6 +70,10 @@ def main():
                     snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
                     header = documents[i].split('"')[1]                 #Finds the header of an article for printing results.
 
+
+                    #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents_for_printing[i][snippet_index:snippet_index+100]))
+                    #^the print above would take the snippet index and use in the "unstemmed" documents file (called documents_for_printing), but the indexes did not match, since the number of characters is altered in the stemming process.
+                    
                     print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
                     
             except KeyError:
@@ -156,6 +160,7 @@ def main():
             query = query.lower()
             if re.match(r'\w+_s\b', query):             #Recognizes stem searches
                 print("Searching a stem...")
+                documents_for_printing = relevance(text_string)     #This was an attempt to print the stem search correctly, but it did not work...
                 documents = stem(text_string)
                 test_query(query)
             #elif re.match(r'\w+ \w+ ?(\w+)?', query):   #Recognizes multi-word queries of two or three words
