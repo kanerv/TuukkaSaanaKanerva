@@ -7,6 +7,12 @@
         <h1>TuukkaSaanaKanerva's search engine'</h1>
         <!--Reload the page with variable "query" in the URL-->
         <form>
+            <input type="radio" id="exact" name="choice" value="exact">
+            <label for="exact">Exact match</label><br>
+            <input type="radio" id="stem" name="choice" value="stem">
+            <label for="stem">Stem search</label><br>
+            <input type="radio" id="wildcard" name="choice" value="wildcard">
+            <label for="wildcard">Wildcard search</label> 
             <input type="text" name="query" autofocus>
             <input type="submit" value="Search">
         </form>
