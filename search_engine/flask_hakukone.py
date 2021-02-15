@@ -10,7 +10,7 @@ from nltk.stem.snowball import SnowballStemmer
 app = Flask(__name__)
 
 documents = []
-file_variable = open("enwiki-20181001-corpus.100-articles.txt", "r+")
+file_variable = open("enwiki-20181001-corpus.100-articles.txt", encoding="utf8")
 text_string = file_variable.read()
 
 
@@ -100,11 +100,12 @@ def stem(documents_in):
 
     return documents
 
+
 def test_query(query):
     matches = []
     
     """Ceates a matric and term-dictionary index"""
-    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\w*\b")
     global tf_matrix, terms, t2i
     tf_matrix = tfv.fit_transform(documents).T.todense()
     terms = tfv.get_feature_names()

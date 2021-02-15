@@ -22,7 +22,7 @@ def main():
         path = input("Please input file path: ")
         
         def get_num_lines(path): #function to find out file size for progress bar
-            fp = open(path, "r+")
+            fp = open(path, "r+", encoding="utf8")
             buf = mmap.mmap(fp.fileno(), 0)
             lines = 0
             while buf.readline():
