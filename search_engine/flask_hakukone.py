@@ -21,17 +21,20 @@ def search():
     
     #Get query from URL variable
     query = request.args.get('query')
+    
     #Get choice of search engine from URL variable
     choice = request.args.get('choice')
     
     #If query exists (i.e. is not None)
     if query:
         if choice == "stem":                            #(dead code)re.match(r'\w+_s\b', query):             #Recognizes stem searches
+            query = query.lower()
             query = query + "_s"
             documents = stem(text_string)
             matches = test_query(query)
 
         elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
+            query = query.lower()
             documents = relevance(text_string)
             queries = []
             for article in documents:               #Iterates through the articles
@@ -48,7 +51,8 @@ def search():
             for query in queries:
                 matches = test_query(query)                   #Searches with all queries separately
 
-        elif choice ==  "exact": #!= "":
+        elif choice ==  "exact":                            #!= "":
+            query = query.lower()
             documents = relevance(text_string)
             matches = test_query(query)
         
