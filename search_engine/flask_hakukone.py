@@ -128,7 +128,7 @@ def test_query(query):
         header = str(header)
         snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
         snippet = str(snippet)
-        line = "The score of " + query + " is "+ score + " in the document named: " + header + ".\n" + "Here is a snippet: " + snippet
+        line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
         matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
     return matches
