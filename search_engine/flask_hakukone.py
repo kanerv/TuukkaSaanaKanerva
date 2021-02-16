@@ -122,21 +122,16 @@ def test_query(query):
         ranked_scores_and_doc_ids = \
         sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
         #print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
-
-        # Trying to output something if the search doesn't match anything, NOT WORKING YET
-        if len(ranked_scores_and_doc_ids) == 0:
-            line = "No matches found"
+        
+        for score, i in ranked_scores_and_doc_ids:
+            score = "{:.4f}".format(score)
+            snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
+            header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
+            header = str(header)
+            snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
+            snippet = str(snippet)
+            line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
-        else:
-            for score, i in ranked_scores_and_doc_ids:
-                score = "{:.4f}".format(score)
-                snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
-                header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
-                header = str(header)
-                snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
-                snippet = str(snippet)
-                line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
-                matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
     except KeyError:
         line = "Search term not found."
