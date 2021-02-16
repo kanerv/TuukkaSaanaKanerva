@@ -51,7 +51,8 @@ def test_wcquery(query):
             matches.append(line)
             
     else:
-        matches.append("No matches for wildcard search ", query)
+        line = "No matches for wildcard search " + query
+        matches.append(line)
         print()
         
           
@@ -60,24 +61,6 @@ def test_wcquery(query):
     #print(matches)
     print(matches)
     return matches
-
-                
-
-#changes all words matching the query into wildcards in the data.
-def modify_wildcards_in_doc(query, documents_in):
-    documents_out = []
-    wc_word = query+"_wc"
-    for article in documents_in:
-        words = article.split()
-        for word in words:
-            word = word.lower()
-            if re.match(query+".+", word):
-                print("Found a match: " + word)
-                words = re.sub(word, wc_word, str(words))
-        if wc_word in words:
-            print("previous wildcards added to documents!")
-        documents_out.append(words)
-    return documents_out
 
 #searches for query            
 def test_query(query):
@@ -89,24 +72,21 @@ def test_query(query):
     global tf_matrix, terms, t2i
     tf_matrix = tfv.fit_transform(documents).T.todense()
     terms = tfv.get_feature_names()
-    t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
-    hits_list = np.array(tf_matrix[t2i[query]])[0]
-    hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
 
-    ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
+    if query in terms:
+        t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
+        hits_list = np.array(tf_matrix[t2i[query]])[0]
+        hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
 
-    #cosine similarity:
-    query_vec = tfv.transform([query]).todense()
-    scores = np.dot(query_vec, tf_matrix)                
-    ranked_scores_and_doc_ids = \
-    sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
-    #print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
+        ranked_hits_and_doc_ids = sorted(hits_and_doc_ids, reverse=True)
 
-    # Trying to output something if the search doesn't match anything, NOT WORKING YET
-    if len(ranked_scores_and_doc_ids) == 0:
-        line = "No matches found"
-        matches.append(line)
-    else:
+        #cosine similarity:
+        query_vec = tfv.transform([query]).todense()
+        scores = np.dot(query_vec, tf_matrix)                
+        ranked_scores_and_doc_ids = \
+        sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
+        #print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query:")
+        
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
             snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
@@ -116,9 +96,13 @@ def test_query(query):
             snippet = str(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
-    print(len(matches))
+
+    else:
+        line = "No matches for wildcard search " + query
+        matches.append(line)
     #print("query: " + query + "\n document: " + header + "\n snippet: " + snippet + "\n ***")
     #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
+    print(matches)
     return matches
 
 
@@ -133,5 +117,5 @@ query = query.lower()
 documents = relevance(text_string)
 #documents = modify_wildcards_in_doc(query, documents)
 
-matches = test_wcquery(query)               
+matches = test_query(query)               
 

@@ -110,8 +110,9 @@ def test_query(query):
     global tf_matrix, terms, t2i
     tf_matrix = tfv.fit_transform(documents).T.todense()
     terms = tfv.get_feature_names()
-    t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
-    try:
+
+    if query in terms:
+        t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
         hits_list = np.array(tf_matrix[t2i[query]])[0]        
         hits_and_doc_ids = [ (hits, i) for i, hits in enumerate(hits_list) if hits > 0 ]
 
@@ -134,9 +135,11 @@ def test_query(query):
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
-    except KeyError:
-        line = "Search term not found."
+
+    else:
+        line = "Search term " + query + "not found."
         matches.append(line)
+        
     return matches
 
 #search function for wildcard queries
