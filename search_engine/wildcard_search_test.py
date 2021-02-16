@@ -17,9 +17,54 @@ def relevance(documents_in):
 
     return documents
 
+def test_wcquery(query):
+    matches = []
+    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\w*\b")
+    global tf_matrix, terms, t2i
+    tf_matrix = tfv.fit_transform(documents).T.todense()
+    terms = tfv.get_feature_names()
+    wc_query = query+".+"
+    #print("wildcard query: ", wc_query)
+
+    wc_words = [w for w in terms if re.fullmatch(wc_query, w)]
+    #print("wc_words: ", wc_words)
+    
+    if wc_words:
+        new_query_string = " ".join(wc_words)
+        #print("new_query_string: ", new_query_string)
+        query_vec = tfv.transform([new_query_string]).todense()
+        #print("query_vec: ", query_vec)
+        scores = np.dot(query_vec, tf_matrix)                
+        ranked_scores_and_doc_ids = \
+        sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
+        #print("There are ", len(ranked_scores_and_doc_ids), " documents matching your query.")
+
+        for score, i in ranked_scores_and_doc_ids:
+            score = "{:.4f}".format(score)
+            snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
+            header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
+            header = str(header)
+            snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
+            snippet = str(snippet)
+            line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
+            #print("Line: ", type(line))
+            matches.append(line)
+            
+    else:
+        matches.append("No matches for wildcard search ", query)
+        print()
+        
+          
+        #print("query: " + query + "\n document: " + header + "\n snippet: " + snippet + "\n ***")
+#print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
+    #print(matches)
+    print(matches)
+    return matches
+
+                
+
 #changes all words matching the query into wildcards in the data.
 def modify_wildcards_in_doc(query, documents_in):
-    print(type(documents_in))
     documents_out = []
     wc_word = query+"_wc"
     for article in documents_in:
@@ -71,7 +116,8 @@ def test_query(query):
             snippet = str(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
-    print("query: " + query + "\n document: " + header + "\n snippet: " + snippet + "\n ***")
+    print(len(matches))
+    #print("query: " + query + "\n document: " + header + "\n snippet: " + snippet + "\n ***")
     #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
     return matches
 
@@ -85,7 +131,7 @@ query = input("input query:")
 
 query = query.lower()
 documents = relevance(text_string)
-documents = modify_wildcards_in_doc(query, documents)
+#documents = modify_wildcards_in_doc(query, documents)
 
-matches = test_query(query+"_wc")               
+matches = test_wcquery(query)               
 

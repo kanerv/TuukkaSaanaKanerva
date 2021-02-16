@@ -36,7 +36,8 @@ def search():
         elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
             query = query.lower()
             documents = relevance(text_string)
-            queries = []
+            matches = test_wcquery(query)
+            """queries = []
             for article in documents:               #Iterates through the articles
                 words = article.split()
                 for word in words:
@@ -49,7 +50,7 @@ def search():
                         if word not in queries:             #saves all matching queries
                             queries.append(word)
             for query in queries:
-                matches = test_query(query)                   #Searches with all queries separately
+                matches = test_query(query)                   #Searches with all queries separately"""
 
         elif choice ==  "exact":                            #!= "":
             query = query.lower()
@@ -137,4 +138,38 @@ def test_query(query):
         line = "Search term not found."
         matches.append(line)
     return matches
+
+#search function for wildcard queries
+def test_wcquery(query):
+    matches = []
+    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\w*\b")
+    global tf_matrix, terms, t2i
+    tf_matrix = tfv.fit_transform(documents).T.todense()
+    terms = tfv.get_feature_names()
+    wc_query = query+".+"
+    wc_words = [w for w in terms if re.fullmatch(wc_query, w)]      #this line is copied from the group "wewhoshallnotbenamed"
     
+    if wc_words:
+        new_query_string = " ".join(wc_words)
+        query_vec = tfv.transform([new_query_string]).todense()
+        scores = np.dot(query_vec, tf_matrix)                
+        ranked_scores_and_doc_ids = \
+        sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
+
+        for score, i in ranked_scores_and_doc_ids:
+            score = "{:.4f}".format(score)
+            snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
+            header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
+            header = str(header)
+            snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
+            snippet = str(snippet)
+            line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
+            matches.append(line)
+            
+    else:
+        line = "No matches for wildcard search " + query
+        matches.append(line)
+        print()
+        
+    print(matches)
+    return matches
