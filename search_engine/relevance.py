@@ -45,7 +45,8 @@ def main():
 
             try:
                 """Ceates a matric and term-dictionary index"""
-                tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+                #tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+                tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
                 global tf_matrix, terms, t2i
                 tf_matrix = tfv.fit_transform(documents).T.todense()
                 terms = tfv.get_feature_names()
