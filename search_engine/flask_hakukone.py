@@ -37,21 +37,7 @@ def search():
             query = query.lower()
             documents = relevance(text_string)
             matches = test_wcquery(query)
-            """queries = []
-            for article in documents:               #Iterates through the articles
-                words = article.split()
-                for word in words:
-                    word = word.lower()
-                    if re.match(query[:-1]+".+", word):    #Finds all possible queries matching the initial query
-                        while re.match(r'\W', word[-1]):     #gets rid of punctuation at the end of word    
-                            word = word[:-1]
-                        while re.match(r'\W', word[0]):      #gets rid of punctuation in the beginning of word
-                            word = word[1:]
-                        if word not in queries:             #saves all matching queries
-                            queries.append(word)
-            for query in queries:
-                matches = test_query(query)                   #Searches with all queries separately"""
-
+            
         elif choice ==  "exact":                            #!= "":
             query = query.lower()
             documents = relevance(text_string)
