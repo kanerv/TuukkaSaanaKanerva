@@ -127,6 +127,8 @@ def test_query(query):
         
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
+            #query = re.search(r'\b' + query + r'\b', documents[i].lower())  #Trying to make the find() function to match only exact word like 'cat' and not 'publiCATion'
+            query = str(query)
             snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
             header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
             header = str(header)
