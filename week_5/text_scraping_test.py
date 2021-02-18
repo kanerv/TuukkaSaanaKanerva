@@ -7,45 +7,34 @@ import nltk, requests, datetime, webbrowser
 from bs4 import BeautifulSoup
 from termcolor import colored
 from urllib import request #to make the Reuters retrieval work
+import json
+import re
 
 """Defining functions"""
 
 def main():
-        lista2 = []
-        cleanlist2 = []
-        linkit2 = []
-        test = []
-        url = "https://www.theguardian.com/world"
+        review_links = []
+        preview = []
+        url = "https://www.rottentomatoes.com/top/bestofrt/"
+        parser = "html.parser"
         html = requests.get(url)
-        page = html.content
-        soup = BeautifulSoup(page, 'html.parser')
-   
-        for i in soup.find_all(class_="fc-item__title"):
-            i = i.get_text()
-            i = str(i).strip()
-            i = str(i).replace('  ',' ')
-            if len(lista2) < 10:
-                lista2.append(i)
-                
-        #this for-loop extracts the url links corresponding the headlines
-        for link in soup.find_all(class_="fc-item__link"):
-            link = link.get("href")
-            if len(linkit2) < 10: #appends 10 first headlines to a list
-                linkit2.append(link)
-
+        soup = BeautifulSoup(html.text, parser)   
+        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents))
+        for i in json_content['itemListElement']:
+            if len(review_links) < 10:
+                review_links.append(i['url'])
         
-        for i in linkit2:
+        for i in review_links:
             link = requests.get(i)
             page_content = link.content
             soup = BeautifulSoup(page_content, 'html.parser')
-            for i in soup.find_all(class_='css-38z03z'):
+            for i in soup.find_all(class_="movie_synopsis clamp clamp-6 js-clamp"):
                 i = i.string
-                test.append(i)
+                preview.append(i)
                 
                 
-        for i, (x, y, z) in enumerate(zip(lista2, linkit2, test)):
-            print(x, "\nURL:", y, "\nPreview: ", z, "\n*")
-        #print(*lista2, sep ='\n*\n')
+        for i, (y, z) in enumerate(zip(review_links, preview)):
+            print("\nURL:", y, "\nPreview: ", z, "\n*")
         print("***********")
         print()
                     
