@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request
 import re, fileinput, mmap, nltk
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+import matplotlib as mlp
 from termcolor import colored
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from nltk.stem.snowball import SnowballStemmer
+import os
 
 #Initialize Flask instance
 app = Flask(__name__)
@@ -17,6 +20,7 @@ text_string = file_variable.read()
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
+    os.system('rm -f static/*.png')
     matches = []
     
     #Get query from URL variable
@@ -52,8 +56,28 @@ def search():
             #if query.lower() in entry['name'].lower():
                 #matches.append(entry)
     #Render index.html with matches variable
+
+            
+
+        generate_query_plot(query, graph_matches)
     return render_template('index.html', matches=matches)
 
+def generate_query_plot(query, graph_matches):
+    # create a figure
+    fig = plt.figure()
+    plt.title("Word distribution per document \n query: "+query)
+    # some values we will use to generate a plot
+    dist_dict={}
+    for match in graph_matches:
+        dist_dict[match['name']] = len(match['content']) 
+    # from a dictionary we can create a plot in two steps:
+    #  1) plotting the bar chart 
+    #  2) setting the appropriate ticks in the x axis
+    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=30) # labels are rotated
+    # make room for the labels
+    plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
+    plt.savefig('static/query_plot.png')
 
 def relevance(documents_str):            
     documents_pre = documents_str.split("</article>") #splits the file into a list at </article>
@@ -94,7 +118,8 @@ def stem(documents_in):
 """search function for exact and stem search"""
 def test_query(query):
     matches = []
-    
+    global graph_matches
+    graph_matches = []
     """Ceates a matric and a term vocabulary"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
     global tf_matrix, terms, t2i
@@ -130,6 +155,8 @@ def test_query(query):
             snippet = str(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
+            graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png' })
+            
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
 
     else:       #if query is not found in the data

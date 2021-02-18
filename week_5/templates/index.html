@@ -6,6 +6,7 @@
     <body style="background-color:rgba(104, 171, 71, 0.5);">
         <h1 style="border:2px solid rgb(64, 114, 63); text-align:center; font-family:'Courier New';">TuukkaSaanaKanerva's search engine</h1>
 	  <p style="text-align:center; font-family:'Courier New'">This search engine searches the contents of 100 first English Wikipedia articles.<br>Press <a href="https://en.wikipedia.org/wiki/Main_Page">here</a> to move to the English Wikipedia.</p>
+       
 	   <!--Reload the page with variable "query" in the URL-->
         <form style="text-align:center; font-family:'Courier New'">
             <input type="radio" id="exact" name="choice" value="exact" checked>
@@ -17,8 +18,18 @@
             <input type="text" name="query" autofocus>
             <input type="submit" value="Search">
         </form>
+
 	<hr>
-            <!--Go through each item in the "matches" variable sent from
+
+<!--insert the query plot-->
+            <tr>
+                <td></td>
+                <td><font face="Courier New" size='2' color="gray" align='right'><i>Your query has the following frequecy distribution</i></td>
+                <td><img src="/static/query_plot.png" style="width: 500px; height 100%" align="right"></td>
+            </tr>
+         
+
+   <!--Go through each item in the "matches" variable sent from
                 search() function in the Flask app-->
             
             {% for item in matches | unique %}
