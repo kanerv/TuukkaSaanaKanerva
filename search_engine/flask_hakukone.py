@@ -33,6 +33,8 @@ def search():
             query = query + "_s"
             documents_s = []
             documents = stem(text_string)
+            global full_snip
+            full_snip = relevance(text_string)
             matches = test_query(query)
 
         elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
@@ -125,9 +127,9 @@ def test_query(query):
             score = "{:.4f}".format(score)
             query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Trying to make the find() function to match only exact word like 'cat' and not 'publiCATion'
             snippet_index = query_match.start()                 #Finds an index for a snippet for printing results.
-            header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
+            header = full_snip[i].split('"')[1]                #Finds the header of an article for printing results.
             header = str(header)
-            snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
+            snippet = "..."+full_snip[i][snippet_index:snippet_index+100]+"..."
             snippet = str(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
