@@ -1,13 +1,10 @@
 from flask import Flask, render_template, request
 import re, fileinput, mmap, nltk
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-import matplotlib as mlp
 from termcolor import colored
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from nltk.stem.snowball import SnowballStemmer
-import os
 
 #Initialize Flask instance
 app = Flask(__name__)
@@ -20,13 +17,13 @@ text_string = file_variable.read()
 #Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
-    os.system('rm -f static/*.png')
     matches = []
     
     #Get query from URL variable
     query = request.args.get('query')
     
     #Get choice of search engine from URL variable
+    global choice
     choice = request.args.get('choice')
     
     #If query exists (i.e. is not None)
@@ -34,13 +31,14 @@ def search():
         if choice == "stem":                            #(dead code)re.match(r'\w+_s\b', query):             #Recognizes stem searches
             query = query.lower()
             query = query + "_s"
-            documents = []
+            documents_s = []
             documents = stem(text_string)
+            global full_snip
+            full_snip = relevance(text_string)
             matches = test_query(query)
 
         elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
             query = query.lower()
-            documents = []
             documents = relevance(text_string)
             matches = test_wcquery(query)
             
@@ -56,28 +54,8 @@ def search():
             #if query.lower() in entry['name'].lower():
                 #matches.append(entry)
     #Render index.html with matches variable
-
-            
-
-        generate_query_plot(query, graph_matches)
     return render_template('index.html', matches=matches)
 
-def generate_query_plot(query, graph_matches):
-    # create a figure
-    fig = plt.figure()
-    plt.title("Word distribution per document \n query: "+query)
-    # some values we will use to generate a plot
-    dist_dict={}
-    for match in graph_matches:
-        dist_dict[match['name']] = len(match['content']) 
-    # from a dictionary we can create a plot in two steps:
-    #  1) plotting the bar chart 
-    #  2) setting the appropriate ticks in the x axis
-    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=30) # labels are rotated
-    # make room for the labels
-    plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig('static/query_plot.png')
 
 def relevance(documents_str):            
     documents_pre = documents_str.split("</article>") #splits the file into a list at </article>
@@ -85,6 +63,7 @@ def relevance(documents_str):
         i = re.sub("<article name=", "", i)
         i = re.sub(">", "", i)
         documents.append(i)
+    documents = [w for w in nltk.word_tokenize(documents)] #tokenises the text
 
     return documents
             
@@ -92,7 +71,8 @@ def relevance(documents_str):
 def stem(documents_in):
     stem_words = []
     documents_pre = []
-    documents_out = []
+    global documents_s
+    documents_s = []
     tokenized = []
         
     tokens = [w for w in nltk.word_tokenize(documents_in)] #tokenises the text
@@ -110,22 +90,21 @@ def stem(documents_in):
     for i in documents_pre:
         i = re.sub("<_s articl_s name=_s ''_s", "\"", i)
         i = re.sub("''_s >", "\"", i)
-        documents.append(i)
+        documents_s.append(i)
 
-    return documents
+    return documents_s
 
 
 """search function for exact and stem search"""
 def test_query(query):
     matches = []
-    global graph_matches
-    graph_matches = []
+    if choice == "stem":
+        documents = documents_s
     """Ceates a matric and a term vocabulary"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
     global tf_matrix, terms, t2i
     tf_matrix = tfv.fit_transform(documents).T.todense()
     terms = tfv.get_feature_names()
-
     if query in terms:      #if query is found in the data
         
         """Creates a term-dictionary index and finds matching documents"""
@@ -149,14 +128,12 @@ def test_query(query):
             score = "{:.4f}".format(score)
             query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Trying to make the find() function to match only exact word like 'cat' and not 'publiCATion'
             snippet_index = query_match.start()                 #Finds an index for a snippet for printing results.
-            header = documents[i].split('"')[1]                #Finds the header of an article for printing results.
+            header = full_snip[i].split('"')[1]                #Finds the header of an article for printing results.
             header = str(header)
-            snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
+            snippet = "..."+full_snip[i][snippet_index:snippet_index+100]+"..."
             snippet = str(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
-            graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png' })
-            
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
 
     else:       #if query is not found in the data
