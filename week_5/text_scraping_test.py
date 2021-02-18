@@ -1,6 +1,6 @@
 ##################################################
-#This is an app to retrieve raw text from a      #
-#list of hyperlinks, e.g. guardian headline page #
+#This is an app to retrieve raw text from Rotten #
+#Tomatoes 100 best films list                    #
 ##################################################
 
 import nltk, requests, datetime, webbrowser
@@ -28,7 +28,7 @@ def main():
             link = requests.get(i)
             page_content = link.content
             soup = BeautifulSoup(page_content, 'html.parser')
-            for i in soup.find_all(class_="movie_synopsis clamp clamp-6 js-clamp"):
+            for i in soup.find('span', attrs={'data-qa': 'critics-consensus'}):
                 i = i.string
                 preview.append(i)
                 
