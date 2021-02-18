@@ -23,6 +23,7 @@ def search():
     query = request.args.get('query')
     
     #Get choice of search engine from URL variable
+    global choice
     choice = request.args.get('choice')
     
     #If query exists (i.e. is not None)
@@ -30,13 +31,12 @@ def search():
         if choice == "stem":                            #(dead code)re.match(r'\w+_s\b', query):             #Recognizes stem searches
             query = query.lower()
             query = query + "_s"
-            documents = []
+            documents_s = []
             documents = stem(text_string)
             matches = test_query(query)
 
         elif choice == "wildcard":                      #(dead code)re.match(r'\w+\*', query):             #Recognizes wildcard queries that end with a wildcard
             query = query.lower()
-            documents = []
             documents = relevance(text_string)
             matches = test_wcquery(query)
             
@@ -68,7 +68,8 @@ def relevance(documents_str):
 def stem(documents_in):
     stem_words = []
     documents_pre = []
-    documents_out = []
+    global documents_s
+    documents_s = []
     tokenized = []
         
     tokens = [w for w in nltk.word_tokenize(documents_in)] #tokenises the text
@@ -86,21 +87,21 @@ def stem(documents_in):
     for i in documents_pre:
         i = re.sub("<_s articl_s name=_s ''_s", "\"", i)
         i = re.sub("''_s >", "\"", i)
-        documents.append(i)
+        documents_s.append(i)
 
-    return documents
+    return documents_s
 
 
 """search function for exact and stem search"""
 def test_query(query):
     matches = []
-    
+    if choice == "stem":
+        documents = documents_s
     """Ceates a matric and a term vocabulary"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
     global tf_matrix, terms, t2i
     tf_matrix = tfv.fit_transform(documents).T.todense()
     terms = tfv.get_feature_names()
-
     if query in terms:      #if query is found in the data
         
         """Creates a term-dictionary index and finds matching documents"""
