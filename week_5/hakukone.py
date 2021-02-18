@@ -180,4 +180,3 @@ def test_wcquery(query):
         print()
         
     return matches
-
