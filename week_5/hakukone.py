@@ -74,10 +74,10 @@ def generate_query_plot(query, graph_matches):
     #  1) plotting the bar chart 
     #  2) setting the appropriate ticks in the x axis
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=30) # labels are rotated
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80) # labels are rotated
     # make room for the labels
     plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig('static/query_plot.png')
+    plt.savefig(f'static/query_{query}_plot.png')
 
 def relevance(documents_str):            
     documents_pre = documents_str.split("</article>") #splits the file into a list at </article>
