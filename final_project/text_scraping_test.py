@@ -21,7 +21,7 @@ def main():
         parser = "html.parser"
         html = requests.get(url)
         soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
-        f = open("text_data.txt", "a")
+        f = open("text_data.txt", "w")
         json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
         for i in json_content['itemListElement']: #iterates through dictionary
             if len(review_links) < 10: #caps list at 10 url's
