@@ -9,6 +9,8 @@ import numpy as np
 from nltk.stem.snowball import SnowballStemmer
 import os
 
+mlp.use('Agg')
+
 #Initialize Flask instance
 app = Flask(__name__)
 
