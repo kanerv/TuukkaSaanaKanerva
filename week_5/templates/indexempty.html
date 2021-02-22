@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>TuukkaSaanaKanerva's search engine</title>
+    </head>
+    <body style="background-color:rgba(104, 171, 71, 0.5);">
+        <h1 style="border:2px solid rgb(64, 114, 63); text-align:center; font-family:'Courier New';">TuukkaSaanaKanerva's search engine</h1>
+         <p style="text-align:center; font-family:'Courier New'">This search engine searches the contents of 100 first English Wikipedia articles.<br>Press <a href="https://en.wikipedia.org/wiki/Main_Page">here</a> to move to the English Wikipedia.</p>
+
+           <!--Reload the page with variable "query" in the URL-->
+        <form style="text-align:center; font-family:'Courier New'">
+            <input type="radio" id="exact" name="choice" value="exact" checked>
+            <label for="exact">Exact match (e.g. anarchism)</label><br>
+            <input type="radio" id="stem" name="choice" value="stem">
+            <label for="stem">Stem search (e.g. anarch)</label><br>
+            <input type="radio" id="wildcard" name="choice" value="wildcard">
+            <label for="wildcard">Wildcard search (e.g. anarcho)</label><br>
+            <input type="text" name="query" autofocus>
+            <input type="submit" value="Search">
+        </form>
+
+        <hr>
+    </body>
+</html>
