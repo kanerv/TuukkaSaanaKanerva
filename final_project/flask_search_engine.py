@@ -37,27 +37,20 @@ def search():
     choice = request.args.get('choice')
     
     #If query exists (i.e. is not None)
-    if query:
-        if choice == "stem":                            
-            query = query.lower()
+    if query:                               
+        query = query.lower()
+        
+        if choice == "stem":     
             query = query + "_s"
-            documents = []
-            documents = stem(text_string)
             matches = test_query(query)
 
         elif choice == "wildcard":                      
-            query = query.lower()
-            documents = []
-            documents = relevance(text_string)
             matches = test_wcquery(query)
             
         elif choice ==  "exact":    
-            query = query.lower()
-            documents = []
-            documents = relevance(text_string)
             matches = test_query(query)
 
-    generate_query_plot(query, graph_matches)
+        generate_query_plot(query, graph_matches)
     return render_template('index.html', matches=matches)
 
 
@@ -85,7 +78,7 @@ def test_query(query):
         ranked_scores_and_doc_ids = \
         sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
-    """Finds the number of matched documents for printing"""
+        """Finds the number of matched documents for printing"""
         line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:"
         matches.append(line)
 
@@ -108,3 +101,21 @@ def test_query(query):
         line = "Search term " + query + " not found."
         matches.append(line)
     return matches
+
+
+def generate_query_plot(query, graph_matches):
+    # create a figure
+    fig = plt.figure()
+    plt.title("Word distribution per document \n query: "+query)
+    # some values we will use to generate a plot
+    dist_dict={}
+    for match in graph_matches:
+        dist_dict[match['name']] = len(match['content']) 
+    # from a dictionary we can create a plot in two steps:
+    #  1) plotting the bar chart 
+    #  2) setting the appropriate ticks in the x axis
+    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80) # labels are rotated
+    # make room for the labels
+    plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
+    plt.savefig('static/query_plot.png')
