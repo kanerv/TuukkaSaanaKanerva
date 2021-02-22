@@ -18,24 +18,6 @@
         </form>
 
 	<hr>
-	<table>
-	<!--insert the query plot-->
-            <tr>
-                <td></td>
-                <td align= "right"><font face="Courier New" size='2' color="black"><i>Your query has the following frequecy distribution</i></font>
-                <img src="./static/query_{{ query }}_plot.png" style="width: 500px; height 100%" align="right"></td>
-            </tr>
-         
-
-   <!--Go through each item in the "matches" variable sent from
-                search() function in the Flask app-->
-            
-            {% for item in matches | unique %}
-                
-                <pre>{{ item }}</pre>
-                <br>
-            <!--End for loop-->
-            {% endfor %}
-	</table>
     </body>
 </html>
+

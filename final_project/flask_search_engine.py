@@ -47,7 +47,9 @@ def search():
             matches = test_query(query)
 
         generate_query_plot(query, graph_matches)
-    return render_template('index.html', matches=matches)
+        return render_template('index.html', matches=matches, query=query)
+    else:
+        return render_template('indexempty.html', matches=[])
 
 
 def test_query(query):
@@ -159,4 +161,5 @@ def generate_query_plot(query, graph_matches):
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80) # labels are rotated
     # make room for the labels
     plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig('static/query_plot.png')
+    plt.savefig(f'static/query_{query}_plot.png')
+
