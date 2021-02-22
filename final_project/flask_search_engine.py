@@ -40,11 +40,7 @@ def search():
     if query:                               
         query = query.lower()
         
-        if choice == "stem":     
-            query = query + "_s"
-            matches = test_query(query)
-
-        elif choice == "wildcard":                      
+        if choice == "wildcard":                      
             matches = test_wcquery(query)
             
         elif choice ==  "exact":    
