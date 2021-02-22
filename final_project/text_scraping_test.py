@@ -9,6 +9,7 @@ from termcolor import colored
 from urllib import request
 import json
 import re
+import time
 
 """Defining functions"""
 
@@ -21,7 +22,6 @@ def main():
         html = requests.get(url)
         soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
         f = open("text_data.txt", "a")
-        
         json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
         for i in json_content['itemListElement']: #iterates through dictionary
             if len(review_links) < 10: #caps list at 10 url's
@@ -36,17 +36,20 @@ def main():
             for i in soup.find_all(class_="what-to-know__section-body"): #looks for the tagging for critics consensus
                 i = i.get_text() #extracts only the text int he paragraph
                 i = re.sub("Read critic reviews", "", i)
+                i = re.sub("\n", "", i)
+                i = re.sub("\"", "", i)
                 preview.append(i)
             for c in soup.find("title"): #extracts page title
                 c = re.sub("- Rotten Tomatoes", "", c) #resubs everything else than film's name
                 titles.append(c)
-                
-                
+            time.sleep(1)
+        f.write("{\n")
         for i, (k, y, z) in enumerate(zip(titles, review_links, preview)):
-            f.write(k)
-            f.write(z)
+            f.write("\""+k+"\": ")
+            f.write("\""+z+"\",\n")
             print("Film: ", k, "\nURL:", y, "\nPreview: ", z, "\n*")
         print("***********")
         print()
+        f.write("}")
         f.close()        
 main()
