@@ -64,16 +64,21 @@ def test_query(query):
         print("Search term " + query + " not found.")
 
 def main():
-    query = input("Tell me your query: ")
-    query = query.lower()
+    query = "?"
+    while query != "":
+        query = input("Tell me your query: ")
+        query = query.lower()
     #if query:
      #   query = query.lower()
    # elif choice == "wildcard":
     #    test_wcquery(query)
         
     #elif choice ==  "exact":
-    test_query(query)
-     
+        if query != "":
+            test_query(query)
+        else:
+            print("You did not enter a query, bye!")
+         
 
 main()
 
