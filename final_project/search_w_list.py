@@ -11,6 +11,7 @@ import os
 import ast
 
 documents = []
+documents_dict = {}
 #found = []
 file = open("text_data_list.txt", "r")
 contents = file.read()
@@ -52,6 +53,8 @@ def test_query(query):
             query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Trying to make the find() function to match only exact word like 'cat' and not 'publiCATion'
             snippet_index = query_match.start()                 #Finds an index for a snippet for printing results.
             header = documents[i].split('mv_title')[1]                #Finds the header of an article for printing results.
+            body = documents[i].split('mv_title')[2]
+            documents_dict[header] = body
             header = str(header)
             snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
             snippet = str(snippet)
