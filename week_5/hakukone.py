@@ -79,7 +79,7 @@ def generate_query_plot(query, graph_matches):
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80) # labels are rotated
     # make room for the labels
     plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig(f'static/query_{query}_plot.png')
+    plt.savefig('static/query_plot.png')
 
 def relevance(documents_str):            
     documents_pre = documents_str.split("</article>") #splits the file into a list at </article>
@@ -157,7 +157,7 @@ def test_query(query):
             snippet = str(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
-            graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png' })
+            graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
             
         #print("The score of " + query + " is {:.4f} in the document named: {:s}. Here is a snippet: ...{:s}...\n***".format(score, header, documents[i][snippet_index:snippet_index+100]))
 
