@@ -11,6 +11,10 @@ import json
 import re
 import time
 
+headers = {
+        'USER-AGENT': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0 ACCEPT text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 ACCEPT-LANGUAGE en-US,en;q=0.5 ACCEPT-ENCODING gzip, deflate, br'
+}
+
 """Defining functions"""
 
 def main():
@@ -19,13 +23,12 @@ def main():
         titles = []
         url = "https://www.rottentomatoes.com/top/bestofrt/" #best 100 films url
         parser = "html.parser"
-        html = requests.get(url)
+        html = requests.get(url, headers)
         soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
         f = open("text_data_list.txt", "w")
         json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
         for i in json_content['itemListElement']: #iterates through dictionary
-            if len(review_links) < 10: #caps list at 10 url's
-                review_links.append(i['url']) #extracts the url from the dictionary
+            review_links.append(i['url']) #extracts the url from the dictionary
                 
 
         
