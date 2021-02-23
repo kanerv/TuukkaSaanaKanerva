@@ -22,7 +22,7 @@ def main():
         preview = [] #links to critics consensuses
         titles = []
 
-        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2016" #best 100 films 2016 url
+        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2020" #best 100 films 2016 url
         parser = "html.parser"
         html = requests.get(url, headers)
         soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
@@ -30,43 +30,9 @@ def main():
         json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
         for i in json_content['itemListElement']: #iterates through dictionary
             review_links.append(i['url']) #extracts the url from the dictionary
-
-        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2017" #best 100 films 2017 url
-        parser = "html.parser"
-        html = requests.get(url, headers)
-        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
-        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
-        for i in json_content['itemListElement']: #iterates through dictionary
-            review_links.append(i['url']) #extracts the url from the dictionary
-
-        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2018" #best 100 films 2018 url
-        parser = "html.parser"
-        html = requests.get(url, headers)
-        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
-        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
-        for i in json_content['itemListElement']: #iterates through dictionary
-            review_links.append(i['url']) #extracts the url from the dictionary
-
-        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2019" #best 100 films 2019 url
-        parser = "html.parser"
-        html = requests.get(url, headers)
-        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
-        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
-        for i in json_content['itemListElement']: #iterates through dictionary
-            review_links.append(i['url']) #extracts the url from the dictionary
-
-        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2020" #best 100 films 2020 url
-        parser = "html.parser"
-        html = requests.get(url, headers)
-        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
-        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
-        for i in json_content['itemListElement']: #iterates through dictionary
-            review_links.append(i['url']) #extracts the url from the dictionary
-        
-                
-
         
         for i in review_links: #iterates through links to individual pages
+            print("Still working...")
             link = requests.get(i) #retrieves the URLs
             page_content = link.content #extracts URL contents from individual film pages
             soup = BeautifulSoup(page_content, 'html.parser') #parses the film page
@@ -79,13 +45,13 @@ def main():
             for c in soup.find("title"): #extracts page title
                 c = re.sub("- Rotten Tomatoes", "", c) #resubs everything else than film's name
                 titles.append("mv_title"+c+" mv_title")
-            time.sleep(2)
+            time.sleep(1)
         f.write("[\n")
         for i, (k, y, z) in enumerate(zip(titles, review_links, preview)):
             f.write("\""+k)
             f.write(z+"\", ")
             #print("Film: ", k, "\nURL:", y, "\nPreview: ", z, "\n*")
-        print("***********")
+        print("Finished.")
         print()
         f.write("]")
         f.close()        
