@@ -24,6 +24,12 @@ file = open("scraped_data.txt", "r") #file where data is stored
 contents = file.read()
 documents = ast.literal_eval(contents)
 file.close()
+"""Ceates a matric and a term vocabulary"""
+tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
+global tf_matrix, terms
+tf_matrix = tfv.fit_transform(documents).T.todense()
+terms = tfv.get_feature_names()
+
 
 @app.route('/search')
 def search():
@@ -52,16 +58,10 @@ def test_query(query):
     matches = []
     global graph_matches
     graph_matches = []
-    """Ceates a matric and a term vocabulary"""
-    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
-    global tf_matrix, terms, t2i
-    tf_matrix = tfv.fit_transform(documents).T.todense()
-    terms = tfv.get_feature_names()
-
+    
 
     if choice == "exact":
         if query in terms:      #if query is found in the data
-
             snippets = []
             
             """Creates a vector from the query, finds matching documents and ranks them"""
@@ -180,6 +180,7 @@ def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
     
 
 def extractor(): #extracts important words from the search results
+    keyphrases = []
     extractor = pke.unsupervised.TopicRank()
     extractor.load_document("document.txt", language='en')
     extractor.candidate_selection()
