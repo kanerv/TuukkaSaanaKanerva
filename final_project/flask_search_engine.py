@@ -48,7 +48,6 @@ def search():
 
         generate_query_plot(query, graph_matches)
         return render_template('index.html', matches=matches, query=query)
-    #To make the starting page empty
     else:
         return render_template('indexempty.html', matches=[])
 
@@ -87,7 +86,7 @@ def test_query(query):
         """Finds information for the printing"""
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
-            query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Regex for matching only exact word like 'cat' and not 'publiCATion' in the snippet
+            query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Trying to make the find() function to match only exact word like 'cat' and not 'publiCATion'
             snippet_index = query_match.start()                 #Finds an index for a snippet for printing results.
             header = documents[i].split('mv_title')[1]                #Finds the header of an article for printing results.
             body = documents[i].split('mv_title')[2]
@@ -101,8 +100,12 @@ def test_query(query):
         f = open("document.txt", "a") #document from which extractor will create themes
         f.write(str(snippets))
         f.close()
-        keyphrases_str = str(extractor()) #retrieves the themes and weights from extractor
-        matches.append("Themes: " + keyphrases_str)
+        keyphrases = extractor() #retrieves the themes and weights from extractor
+        keyphrases_str = '\n'.join(str(v) for v in keyphrases)
+        keyphrases_str = re.sub("\(\'", "", keyphrases_str)
+        keyphrases_str = re.sub("\)", "", keyphrases_str)
+        keyphrases_str = re.sub("\'", "", keyphrases_str)
+        matches.append("Themes:\n" + keyphrases_str)
         
         
     else:       #if query is not found in the data
@@ -140,7 +143,7 @@ def test_wcquery(query):
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
             snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
-            header = documents[i].split('mv_title')[1]          #Finds the header of an article for printing results.
+            header = documents[i].split('mv_title')[1]                #Finds the header of an article for printing results.
             header = str(header)
             snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
             snippet = str(snippet)
@@ -154,7 +157,7 @@ def test_wcquery(query):
         f.write(str(snippets))
         f.close()
         keyphrases_str = str(extractor())
-            
+        matches.append("Themes: " + keyphrases_str)
             
             
     else:       #if there are no words matching the query
@@ -216,7 +219,6 @@ def extractor():
 
     # candidate weighting, in the case of TopicRank: using a random walk algorithm
     extractor.candidate_weighting()
-
     # N-best selection, keyphrases contains the 10 highest scored candidates as
     # (keyphrase, score) tuples
     keyphrases = extractor.get_n_best(n=10)
@@ -224,5 +226,6 @@ def extractor():
     theme_dict = {k:v for k, v in keyphrases}
     generate_theme_plot(theme_dict)
     print(theme_dict)
+
     
     return keyphrases
