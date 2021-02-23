@@ -198,7 +198,7 @@ def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
     var_2 = list(keyphrases.keys())
     plt.scatter(var_1,var_2,color='C2')
     
-    plt.savefig(f'static/theme_{keywords}_plot.png')
+    plt.savefig(f'static/theme_plot.png')
     
 
 def extractor():
