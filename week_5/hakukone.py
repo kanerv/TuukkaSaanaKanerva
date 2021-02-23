@@ -125,6 +125,7 @@ def test_query(query):
     matches = []
     global graph_matches
     graph_matches = []
+    
     """Ceates a matric and a term vocabulary"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
     global tf_matrix, terms, t2i
@@ -173,13 +174,15 @@ def test_query(query):
 """search function for wildcard queries"""
 def test_wcquery(query):
     matches = []
+    global graph_matches
+    graph_matches = []
 
     """Ceates a matric, a term vocabulary and a list of words matching the wildcard query"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\w*\b")
     global tf_matrix, terms, t2i
     tf_matrix = tfv.fit_transform(documents).T.todense()
     terms = tfv.get_feature_names()
-    wc_query = query+".+"
+    wc_query = query+".*"
     wc_words = [w for w in terms if re.fullmatch(wc_query, w)]      #this line is copied from the group "wewhoshallnotbenamed"
     
     if wc_words:        #if words matching the query exist
@@ -187,7 +190,7 @@ def test_wcquery(query):
         """Creates a vector from the words matching the wildcard query, finds matching documents and ranks them"""
         new_query_string = " ".join(wc_words)
         query_vec = tfv.transform([new_query_string]).todense()
-        scores = np.dot(query_vec, tf_matrix)                
+        scores = np.dot(query_vec, tf_matrix)
         ranked_scores_and_doc_ids = \
         sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
@@ -205,10 +208,12 @@ def test_wcquery(query):
             snippet = str(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
+            graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
             
     else:       #if there are no words matching the query
         line = "No matches for wildcard search " + query
         matches.append(line)
+        graph_matches = []
         print()
         
     return matches
