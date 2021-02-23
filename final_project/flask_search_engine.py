@@ -26,7 +26,7 @@ app = Flask(__name__)
 documents = []
 documents_dict = {}
 #found = []
-file = open("text_data_list.txt", "r")
+file = open("scraped_data.txt", "r")
 contents = file.read()
 documents = ast.literal_eval(contents)
 file.close()
@@ -98,14 +98,12 @@ def test_query(query):
             body = documents[i].split('mv_title')[2]
             documents_dict[header] = body
             header = str(header)
-            snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
-            snippet = str(snippet)
-            snippets.append(snippet)
-            line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
+            snippets.append(documents[i])
+            line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is the review: " + body
             matches.append(line)
             graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
-        f = open("document.txt", "w")
+        f = open("document.txt", "a")
         f.write(str(snippets))
         f.close()
         keyphrases_str = str(extractor())

@@ -21,7 +21,7 @@ def main():
         review_links = [] #links to individual film pages
         preview = [] #links to critics consensuses
         titles = []
-        url = "https://www.rottentomatoes.com/top/bestofrt/" #best 100 films url
+        url = "https://www.rottentomatoes.com/top/bestofrt/top_100_drama_movies/" #best 100 films url
         parser = "html.parser"
         html = requests.get(url, headers)
         soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
