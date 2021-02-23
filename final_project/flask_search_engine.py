@@ -157,9 +157,14 @@ def generate_query_plot(query, graph_matches):
     # from a dictionary we can create a plot in two steps:
     #  1) plotting the bar chart 
     #  2) setting the appropriate ticks in the x axis
+    var_1 = list(dist_dict.values())
+    var_2 = list(dist_dict.keys())
+    plt.scatter(var_1,var_2,color='C2')
+    plt.savefig(f'static/query_{query}_plot.png')
+    fig2 = plt.figure()
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80) # labels are rotated
     # make room for the labels
     plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig(f'static/query_{query}_plot.png')
+    plt.savefig(f'static/query_{query}_plot_bar.png')
 
