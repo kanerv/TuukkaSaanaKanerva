@@ -48,6 +48,7 @@ def search():
 
         generate_query_plot(query, graph_matches)
         return render_template('index.html', matches=matches, query=query)
+    #To make the starting page empty
     else:
         return render_template('indexempty.html', matches=[])
 
@@ -86,7 +87,7 @@ def test_query(query):
         """Finds information for the printing"""
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
-            query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Trying to make the find() function to match only exact word like 'cat' and not 'publiCATion'
+            query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Regex for matching only exact word like 'cat' and not 'publiCATion' in the snippet
             snippet_index = query_match.start()                 #Finds an index for a snippet for printing results.
             header = documents[i].split('mv_title')[1]                #Finds the header of an article for printing results.
             body = documents[i].split('mv_title')[2]
@@ -139,7 +140,7 @@ def test_wcquery(query):
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
             snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
-            header = documents[i].split('mv_title')[1]                #Finds the header of an article for printing results.
+            header = documents[i].split('mv_title')[1]          #Finds the header of an article for printing results.
             header = str(header)
             snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
             snippet = str(snippet)
