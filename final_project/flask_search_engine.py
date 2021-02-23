@@ -119,8 +119,9 @@ def test_query(query):
 
 def test_wcquery(query):
     matches = []
-    global graph_matches
+    global graph_matches, theme_plot
     graph_matches = []
+    theme_plot = []
     """Ceates a matric, a term vocabulary and a list of words matching the wildcard query"""
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\w*\b")
     global tf_matrix, terms, t2i
@@ -160,7 +161,6 @@ def test_wcquery(query):
         f.write(str(snippets))
         f.close()
         keyphrases_str = str(extractor())
-        matches.append("Themes: " + keyphrases_str)
             
             
             
@@ -194,8 +194,16 @@ def generate_query_plot(query, graph_matches):
     # make room for the labels
     plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
     plt.savefig(f'static/query_{query}_plot_bar.png')
-    fig
 
+def generate_theme_plot(keyphrases):
+    fig3 = plt.figure()
+    plt.title("Themes weighted: ")
+    var_1 = list(keyphrases.values())
+    var_2 = list(keyphrases.keys())
+    plt.scatter(var_1,var_2,color='C2')
+    
+    plt.savefig(f'static/theme_plot.png')
+    
 
 def extractor():
     # initialize keyphrase extraction model, here TopicRank
@@ -215,4 +223,9 @@ def extractor():
     # N-best selection, keyphrases contains the 10 highest scored candidates as
     # (keyphrase, score) tuples
     keyphrases = extractor.get_n_best(n=10)
+
+    theme_dict = {k:v for k, v in keyphrases}
+    generate_theme_plot(theme_dict)
+    print(theme_dict)
+    
     return keyphrases
