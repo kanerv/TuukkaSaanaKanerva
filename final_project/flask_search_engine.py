@@ -9,6 +9,12 @@ import numpy as np
 from nltk.stem.snowball import SnowballStemmer
 import os
 import ast
+import pke
+
+
+
+
+
 
 
 mlp.use('Agg')
@@ -63,6 +69,8 @@ def test_query(query):
     terms = tfv.get_feature_names()
 
     if query in terms:      #if query is found in the data
+
+        snippets = []
         
         """Creates a term-dictionary index and finds matching documents"""
         t2i = tfv.vocabulary_  # shorter notation: t2i = term-to-index
@@ -80,6 +88,7 @@ def test_query(query):
         line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:"
         matches.append(line)
 
+        
         """Finds information for the printing"""
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
@@ -91,10 +100,18 @@ def test_query(query):
             header = str(header)
             snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
             snippet = str(snippet)
+            snippets.append(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
             graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
+        f = open("document.txt", "w")
+        f.write(str(snippets))
+        f.close()
+        keyphrases_str = str(extractor())
+        matches.append("Themes: " + keyphrases_str)
+        
+        
     else:       #if query is not found in the data
         line = "Search term " + query + " not found."
         matches.append(line)
@@ -113,7 +130,7 @@ def test_wcquery(query):
     wc_words = [w for w in terms if re.fullmatch(wc_query, w)]      #this line is copied from the group "wewhoshallnotbenamed"
     
     if wc_words:        #if words matching the query exist
-
+        snippets = []
         """Creates a vector from the words matching the wildcard query, finds matching documents and ranks them"""
         new_query_string = " ".join(wc_words)
         query_vec = tfv.transform([new_query_string]).todense()
@@ -124,7 +141,7 @@ def test_wcquery(query):
         """Finds the number of matched documents for printing"""
         line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:"
         matches.append(line)
-
+            
         """Finds information for the printing"""
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
@@ -133,9 +150,19 @@ def test_wcquery(query):
             header = str(header)
             snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
             snippet = str(snippet)
+            snippets.append(snippet)
             line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
             matches.append(line)
             graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
+
+        
+        f = open("document.txt", "w")
+        f.write(str(snippets))
+        f.close()
+        keyphrases_str = str(extractor())
+        matches.append("Themes: " + keyphrases_str)
+            
+            
             
     else:       #if there are no words matching the query
         line = "No matches for wildcard search " + query
@@ -167,4 +194,25 @@ def generate_query_plot(query, graph_matches):
     # make room for the labels
     plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
     plt.savefig(f'static/query_{query}_plot_bar.png')
+    fig
 
+
+def extractor():
+    # initialize keyphrase extraction model, here TopicRank
+    extractor = pke.unsupervised.TopicRank()
+
+    # load the content of the document, here document is expected to be in raw
+    # format (i.e. a simple text file) and preprocessing is carried out using spacy
+    extractor.load_document("document.txt", language='en')
+
+    # keyphrase candidate selection, in the case of TopicRank: sequences of nouns
+    # and adjectives (i.e. `(Noun|Adj)*`)
+    extractor.candidate_selection()
+
+    # candidate weighting, in the case of TopicRank: using a random walk algorithm
+    extractor.candidate_weighting()
+
+    # N-best selection, keyphrases contains the 10 highest scored candidates as
+    # (keyphrase, score) tuples
+    keyphrases = extractor.get_n_best(n=10)
+    return keyphrases
