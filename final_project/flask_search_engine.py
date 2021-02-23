@@ -12,11 +12,6 @@ import ast
 import pke
 
 
-
-
-
-
-
 mlp.use('Agg')
 
 #Initialize Flask instance
@@ -24,9 +19,8 @@ app = Flask(__name__)
 
 
 documents = []
-documents_dict = {}
-#found = []
-file = open("scraped_data.txt", "r")
+documents_dict = {} #just in case we want to use dictionary
+file = open("scraped_data.txt", "r") #file where data is stored
 contents = file.read()
 documents = ast.literal_eval(contents)
 file.close()
@@ -103,10 +97,10 @@ def test_query(query):
             matches.append(line)
             graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
-        f = open("document.txt", "a")
+        f = open("document.txt", "a") #document from which extractor will create themes
         f.write(str(snippets))
         f.close()
-        keyphrases_str = str(extractor())
+        keyphrases_str = str(extractor()) #retrieves the themes and weights from extractor
         matches.append("Themes: " + keyphrases_str)
         
         
@@ -182,10 +176,14 @@ def generate_query_plot(query, graph_matches):
     # from a dictionary we can create a plot in two steps:
     #  1) plotting the bar chart 
     #  2) setting the appropriate ticks in the x axis
+
+    #scatterplot
     var_1 = list(dist_dict.values())
     var_2 = list(dist_dict.keys())
     plt.scatter(var_1,var_2,color='C2')
     plt.savefig(f'static/query_{query}_plot.png')
+
+    #bar plot
     fig2 = plt.figure()
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80) # labels are rotated
@@ -193,7 +191,7 @@ def generate_query_plot(query, graph_matches):
     plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
     plt.savefig(f'static/query_{query}_plot_bar.png')
 
-def generate_theme_plot(keyphrases):
+def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
     fig3 = plt.figure()
     plt.title("Themes weighted: ")
     var_1 = list(keyphrases.values())

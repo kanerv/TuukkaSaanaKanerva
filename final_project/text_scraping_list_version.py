@@ -21,14 +21,48 @@ def main():
         review_links = [] #links to individual film pages
         preview = [] #links to critics consensuses
         titles = []
-        url = "https://www.rottentomatoes.com/top/bestofrt/top_100_drama_movies/" #best 100 films url
+
+        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2016" #best 100 films 2016 url
         parser = "html.parser"
         html = requests.get(url, headers)
         soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
-        f = open("text_data_list.txt", "w")
+        f = open("text_data_list.txt", "a")
         json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
         for i in json_content['itemListElement']: #iterates through dictionary
             review_links.append(i['url']) #extracts the url from the dictionary
+
+        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2017" #best 100 films 2017 url
+        parser = "html.parser"
+        html = requests.get(url, headers)
+        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
+        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
+        for i in json_content['itemListElement']: #iterates through dictionary
+            review_links.append(i['url']) #extracts the url from the dictionary
+
+        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2018" #best 100 films 2018 url
+        parser = "html.parser"
+        html = requests.get(url, headers)
+        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
+        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
+        for i in json_content['itemListElement']: #iterates through dictionary
+            review_links.append(i['url']) #extracts the url from the dictionary
+
+        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2019" #best 100 films 2019 url
+        parser = "html.parser"
+        html = requests.get(url, headers)
+        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
+        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
+        for i in json_content['itemListElement']: #iterates through dictionary
+            review_links.append(i['url']) #extracts the url from the dictionary
+
+        url = "https://www.rottentomatoes.com/top/bestofrt/?year=2020" #best 100 films 2020 url
+        parser = "html.parser"
+        html = requests.get(url, headers)
+        soup = BeautifulSoup(html.text, parser) #parses the 100 best films page
+        json_content = json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents)) #loads the json script from parsed html page into a python dictionary
+        for i in json_content['itemListElement']: #iterates through dictionary
+            review_links.append(i['url']) #extracts the url from the dictionary
+        
                 
 
         
@@ -45,12 +79,12 @@ def main():
             for c in soup.find("title"): #extracts page title
                 c = re.sub("- Rotten Tomatoes", "", c) #resubs everything else than film's name
                 titles.append("mv_title"+c+" mv_title")
-            time.sleep(1)
+            time.sleep(2)
         f.write("[\n")
         for i, (k, y, z) in enumerate(zip(titles, review_links, preview)):
             f.write("\""+k)
             f.write(z+"\", ")
-            print("Film: ", k, "\nURL:", y, "\nPreview: ", z, "\n*")
+            #print("Film: ", k, "\nURL:", y, "\nPreview: ", z, "\n*")
         print("***********")
         print()
         f.write("]")
