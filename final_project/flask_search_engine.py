@@ -50,7 +50,7 @@ def search():
         query = query.lower()
         matches = test_query(query)
 
-        generate_query_plot(query, graph_matches)
+        #generate_query_plot(query, graph_matches)
         return render_template('index.html', matches=matches, query=query)
     
     #Returns an empty template for empty searches
@@ -125,7 +125,7 @@ def relevance_search(orig_query, query):
 
     return matches        
 
-def generate_query_plot(query, graph_matches):
+"""def generate_query_plot(query, graph_matches):
 
     # create dictionary
     dist_dict={}
@@ -133,26 +133,31 @@ def generate_query_plot(query, graph_matches):
         dist_dict[match['name']] = len(match['content'])
         
     #scatterplot
-    fig = plt.figure()
-    plt.title("Word distribution per document \n query: "+query)
-    var_1 = list(dist_dict.values())
-    var_2 = list(dist_dict.keys())
-    plt.scatter(var_1,var_2,color='C2')
-    plt.savefig(f'static/query_{query}_plot.png')
+    #fig = plt.figure()
+    #plt.title("Word distribution per document \n query: "+query)
+    #var_1 = list(dist_dict.values())
+    #var_2 = list(dist_dict.keys())
+    #plt.scatter(var_1,var_2,color='C2')
+    #plt.savefig(f'static/query_{query}_plot.png')
 
     #bar plot
-    fig2 = plt.figure()
-    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
-    plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig(f'static/query_{query}_plot_bar.png')
+    #fig2 = plt.figure()
+    #plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
+    #plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
+    #plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
+    #plt.savefig(f'static/query_{query}_plot_bar.png')"""
 
 def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
-    fig3 = plt.figure()
+    fig = plt.figure()
     plt.title("Themes weighted: ")
-    var_1 = list(keyphrases.values())
-    var_2 = list(keyphrases.keys())
-    plt.scatter(var_1,var_2,color='C2')
+    plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='g')
+    plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
+    plt.gcf().subplots_adjust(bottom=0.50)                                  # if you comment this line, your labels in the x-axis will be cutted
+    
+
+    #var_1 = list(keyphrases.values())
+    #var_2 = list(keyphrases.keys())
+    #plt.scatter(var_1,var_2,color='C2')
     plt.savefig(f'static/theme_plot.png')
     
 
