@@ -3,7 +3,7 @@
         <meta charset="utf-8">
         <title>Rotten Linguist's film review search</title>
     </head>
-    <body style="background-color:rgba(104, 171, 71, 0.5);">
+    <body style="background-color:rgba(104, 171, 71, 0.5);margin-left:150px; margin-right:150px;">
         <h1 style="border:2px solid rgb(64, 114, 63); text-align:center; font-family:'Courier New';">Film review search engine</h1>
 	  <p style="text-align:center; font-family:'Courier New'">This search engine searches film reviews.<br>
        
@@ -18,21 +18,18 @@
         </form>
 
 	<hr>
-<tr>
-                <td></td>
                 <!--<td align= "right"><font face="Courier New" size='2' color="black"><i>Your query has the following frequecy distribution</i></font>
                 <img src="./static/query_{{ query }}_plot.png" style="width: 500px; height 100%" align="right"></td>-->
                 
                 <!--<td align= "right"><font face="Courier New" size='2' color="black"><i>Your query has the following frequecy distribution</i></font>
                 <img src="./static/query_{{ query }}_plot_bar.png" style="width: 500px; height 100%" align="right"></td>-->
                 
-                <td style="float:right;margin-left=10px;">
-                <img src="./static/theme_plot.png" style="width: 800px; height 100%" align="right"></td>
+                
+                <img src="./static/theme_plot.png" style="width: 600px; height 100%; float:right;margin-left=30px; border: 5px solid #555;">
 
-
-            </tr>
+      
          
-	<table> 
+	<table style="float:left;"> 
 	<!--insert the query plot-->
             
 
@@ -40,8 +37,7 @@
                 search() function in the Flask app-->
             
             {% for item in matches | unique %}
-                
-                <pre>{{ item }}</pre>
+                <p style="width:800px;">{{ item }}</p>
                 <br>
             <!--End for loop-->
             {% endfor %}

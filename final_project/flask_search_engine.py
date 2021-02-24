@@ -106,7 +106,7 @@ def relevance_search(orig_query, query):
         header = documents[i].split('mv_title')[1]                              #Finds the header of an article for printing results.
         body = documents[i].split('mv_title')[2]                                #Finds the body of the texct
         documents_dict[header] = body                                           #We might not need this                                                                                          
-        line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n" + "Here is the review: " + body
+        line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n\n" + "Here is the review:\n" + body + "\n"
         matches.append(line)
         graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
