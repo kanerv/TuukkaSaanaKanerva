@@ -16,22 +16,20 @@
             <input type="text" name="query" autofocus>
             <input type="submit" value="Search">
         </form>
-
-	<hr>
-                <!--<td align= "right"><font face="Courier New" size='2' color="black"><i>Your query has the following frequecy distribution</i></font>
-                <img src="./static/query_{{ query }}_plot.png" style="width: 500px; height 100%" align="right"></td>-->
-                
-                <!--<td align= "right"><font face="Courier New" size='2' color="black"><i>Your query has the following frequecy distribution</i></font>
-                <img src="./static/query_{{ query }}_plot_bar.png" style="width: 500px; height 100%" align="right"></td>-->
-                
-                
-                <img src="./static/theme_plot.png" style="width: 600px; height 100%; float:right;margin-left=30px; border: 5px solid #555;">
-
       
          
 	<table style="float:left;"> 
-	<!--insert the query plot-->
-            
+		<!--insert the query plot-->
+		<tr>
+			<td></td>
+			<td align= "right"><font face="Courier New" size='2' color="black"><i>Your query has the following adjective distribution</i></font><img src="./static/adj_{{ query }}_plot_bar.png" style="width: 500px; height 100%" align="right"></td>
+                
+                		<td align= "middle"><font face="Courier New" size='2' color="black"><i>Your query has the following verb distribution</i></font><img src="./static/verb_{{ query }}_plot_bar.png" style="width: 500px; height 100%" align="right"></td>
+                
+                
+                		<td align= "left"><font face="Courier New" size='2' color="black"><i>Your query has the following theme distribution</i></font><img src="./static/theme_plot.png" style="width: 600px; height 100%; float:right;margin-left=30px; border: 5px solid #555;">
+
+		<tr>
 
    <!--Go through each item in the "matches" variable sent from
                 search() function in the Flask app-->

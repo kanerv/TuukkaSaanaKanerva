@@ -10,6 +10,7 @@ from nltk.stem.snowball import SnowballStemmer
 import os
 import ast
 import pke
+import spacy
 
 
 mlp.use('Agg')
@@ -26,10 +27,14 @@ documents = ast.literal_eval(contents)
 file.close()
 
 """Ceates a matrix and a term vocabulary"""
+global tfv, tf_matrix, terms
 tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w+\-*\'*\.*\"*\w*\b")
-global tf_matrix, terms
 tf_matrix = tfv.fit_transform(documents).T.todense()
 terms = tfv.get_feature_names()
+
+"""Initializes spacy"""
+global nlp, doc
+nlp = spacy.load('en_core_web_sm') #loads a small english module
 
 
 @app.route('/search')
@@ -51,6 +56,8 @@ def search():
         matches = test_query(query)
 
         #generate_query_plot(query, graph_matches)
+        generate_adj_plot(query, graph_matches)
+        generate_verb_plot(query, graph_matches)
         return render_template('index.html', matches=matches, query=query)
     
     #Returns an empty template for empty searches
@@ -148,6 +155,50 @@ def relevance_search(orig_query, query):
     #plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
     #plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
     #plt.savefig(f'static/query_{query}_plot_bar.png')"""
+
+def generate_adj_plot(query, graph_matches):
+    # create dictionary
+    dist_dict={}
+    adjectives = []
+    for match in graph_matches:
+        doc = nlp(match['content'])
+        adjectives = [token.lemma_ for token in doc if token.pos_ == "ADJ"]
+        #print(adjectives)
+        for adj in adjectives:
+            if adj in dist_dict.keys():
+                dist_dict[adj] = dist_dict[adj] + 1
+            else:
+                dist_dict[adj] = 1
+    
+    #bar plot
+    fig2 = plt.figure()
+    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
+    plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
+    plt.savefig(f'static/adj_{query}_plot_bar.png')
+
+    
+def generate_verb_plot(query, graph_matches):
+    #create dictionary
+    dist_dict={}
+    verbs = []
+    for match in graph_matches:
+        doc = nlp(match['content'])
+        verbs = [token.lemma_ for token in doc if token.pos_ == "VERB"]
+        #print(verbs)
+        for verb in verbs:
+            if verb in dist_dict.keys():
+                dist_dict[verb] = dist_dict[verb] + 1
+            else:
+                dist_dict[verb] = 1
+
+    #bar plot
+    fig2 = plt.figure()
+    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
+    plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
+    plt.savefig(f'static/verb_{query}_plot_bar.png')
+
 
 def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
     fig = plt.figure()
