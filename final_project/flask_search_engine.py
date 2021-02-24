@@ -112,13 +112,14 @@ def relevance_search(orig_query, query):
         score = "{:.4f}".format(score)
         header = documents[i].split('mv_title')[1]                              #Finds the header of an article for printing results.
         body = documents[i].split('mv_title')[2]                                #Finds the body of the texct
+        snippets.append(body)
         documents_dict[header] = body                                           #We might not need this                                                                                          
         line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n\n" + "Here is the review:\n" + body + "\n"
         matches.append(line)
         graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
     """Finds themes"""
-    f = open("document.txt", "a") #document from which extractor will create themes
+    f = open("document.txt", "w") #document from which extractor will create themes
     f.write(str(snippets))
     f.close()
     keyphrases = extractor() #retrieves the themes and weights from extractor
