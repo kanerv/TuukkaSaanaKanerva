@@ -37,11 +37,13 @@
                 search() function in the Flask app-->
             
             {% for item in matches | unique %}
-                <p style="width:800px;">{{ item }}</p>
+                <p style="width:800px;margin-top: 0.2em;
+  margin-bottom: 0.2em;">{{ item }}</p>
                 <br>
             <!--End for loop-->
             {% endfor %}
 	</table>
     <p>{{graph}}</p>
-    </body>
+    
+</body>
 </html>

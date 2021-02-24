@@ -118,11 +118,13 @@ def relevance_search(orig_query, query):
     keyphrases_str = '\n'.join(str(v) for v in keyphrases)
             
     """I'm sure this can be done better but just wanted to clean up the display in webGUI"""
-    keyphrases_str = re.sub("\(\'", "", keyphrases_str)
-    keyphrases_str = re.sub("\)", "", keyphrases_str)
-    keyphrases_str = re.sub("\'", "", keyphrases_str)
-    matches.append("Themes:\n" + keyphrases_str)
-
+    matches.append("Themes:\n")
+    for i in keyphrases:
+        i = str(i)
+        i = re.sub("\(\'", "", i)
+        i = re.sub("\)", "", i)
+        i = re.sub("\'", "", i)
+        matches.append(i)
     return matches        
 
 """def generate_query_plot(query, graph_matches):
