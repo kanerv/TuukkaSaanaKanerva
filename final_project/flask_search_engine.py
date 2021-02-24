@@ -17,15 +17,16 @@ mlp.use('Agg')
 #Initialize Flask instance
 app = Flask(__name__)
 
-
+"""Retrieves data and stores it in a list called documents"""
 documents = []
 documents_dict = {} #just in case we want to use dictionary
 file = open("scraped_data.txt", "r") #file where data is stored
 contents = file.read()
 documents = ast.literal_eval(contents)
 file.close()
-"""Ceates a matric and a term vocabulary"""
-tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w\w+\-*\'*\.*\"*\w*\b")
+
+"""Ceates a matrix and a term vocabulary"""
+tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", token_pattern=r"\b\w+\-*\'*\.*\"*\w*\b")
 global tf_matrix, terms
 tf_matrix = tfv.fit_transform(documents).T.todense()
 terms = tfv.get_feature_names()
@@ -34,6 +35,7 @@ terms = tfv.get_feature_names()
 @app.route('/search')
 def search():
     os.system('rm -f static/*.png')
+    global matches
     matches = []
     
     #Get query from URL variable
@@ -50,6 +52,8 @@ def search():
 
         generate_query_plot(query, graph_matches)
         return render_template('index.html', matches=matches, query=query)
+    
+    #Returns an empty template for empty searches
     else:
         return render_template('indexempty.html', matches=[])
 
@@ -59,94 +63,67 @@ def test_query(query):
     global graph_matches
     graph_matches = []
     
-
-    if choice == "exact":
-        if query in terms:      #if query is found in the data
-            snippets = []
-            
-            """Creates a vector from the query, finds matching documents and ranks them"""
-            query_vec = tfv.transform([query]).todense()
-            scores = np.dot(query_vec, tf_matrix)                
-            ranked_scores_and_doc_ids = \
-            sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
-
-            """Finds the number of matched documents for printing"""
-            line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:"
-            matches.append(line)
-
-            """Finds information for the printing"""
-            for score, i in ranked_scores_and_doc_ids:
-                score = "{:.4f}".format(score)
-                query_match = re.search(r'\b' + query + r'\b', documents[i].lower())  #Trying to make the find() function to match only exact word like 'cat' and not 'publiCATion'
-                snippet_index = query_match.start()                 #Finds an index for a snippet for printing results.
-                header = documents[i].split('mv_title')[1]                #Finds the header of an article for printing results.
-                body = documents[i].split('mv_title')[2]
-                documents_dict[header] = body
-                header = str(header)
-                snippets.append(documents[i])
-                line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is the review: " + body
-                matches.append(line)
-                graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
-
-            f = open("document.txt", "a") #document from which extractor will create themes
-            f.write(str(snippets))
-            f.close()
-            keyphrases = extractor() #retrieves the themes and weights from extractor
-            keyphrases_str = '\n'.join(str(v) for v in keyphrases)
-            
-            """I'm sure this can be done better but just wanted to clean up the display in webGUI"""
-            keyphrases_str = re.sub("\(\'", "", keyphrases_str)
-            keyphrases_str = re.sub("\)", "", keyphrases_str)
-            keyphrases_str = re.sub("\'", "", keyphrases_str)
-            matches.append("Themes:\n" + keyphrases_str)
-
-
-    elif choice == "wildcard":
-        wc_query = query+".+"
-        wc_words = [w for w in terms if re.fullmatch(wc_query, w)]      #this line is copied from the group "wewhoshallnotbenamed"
-        
-        if wc_words:        #if words matching the query exist
-            snippets = []
-
-            
-            """Creates a vector from the words matching the wildcard query, finds matching documents and ranks them"""
-            new_query_string = " ".join(wc_words)
-            query_vec = tfv.transform([new_query_string]).todense()
-            scores = np.dot(query_vec, tf_matrix)                
-            ranked_scores_and_doc_ids = \
-            sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
-
-            """Finds the number of matched documents for printing"""
-            line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:"
-            matches.append(line)
+    if choice:
+        if choice == "exact":
+            if query in terms:      #if query is found in the data
+                matches = relevance_search(query, query)            #searches for query
                 
-            """Finds information for the printing"""
-            for score, i in ranked_scores_and_doc_ids:
-                score = "{:.4f}".format(score)
-                snippet_index = documents[i].lower().find(query)    #Finds an index for a snippet for printing results.
-                header = documents[i].split('mv_title')[1]                #Finds the header of an article for printing results.
-                header = str(header)
-                snippet = "..."+documents[i][snippet_index:snippet_index+100]+"..."
-                snippet = str(snippet)
-                snippets.append(snippet)
-                line = "The score of " + query + " is "+ score + " in the document named: " + header + "\n" + "Here is a snippet: " + snippet
+            else:                   #if query is not found in the data
+                line = "Search term " + query + " not found."
                 matches.append(line)
-                graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
+        elif choice == "wildcard":
+            wc_query = query+".*"   #adds the wildcard notation and finds matching words from the data
+            wc_words = [w for w in terms if re.fullmatch(wc_query, w)]      #this line is copied from the group "wewhoshallnotbenamed"
+            new_query_string = " ".join(wc_words)   #creates a new query from the matching words
             
-            f = open("document.txt", "w")
-            f.write(str(snippets))
-            f.close()
-            keyphrases_str = str(extractor())
-            matches.append("Themes: " + keyphrases_str)
-            
-                    
-        
-    else:       #if query is not found in the data
-        line = "Search term " + query + " not found."
-        matches.append(line)
+            if wc_words:            #if words matching the query exist
+                matches = relevance_search(query, new_query_string) #searches for the query
+                   
+            else:                   #if query is not found in the data
+                line = "Search term " + query + " not found."
+                matches.append(line)
+                
     return matches
 
+
+def relevance_search(orig_query, query):
+    snippets = []
+            
+    """Creates a vector from the query, finds matching documents and ranks them"""
+    query_vec = tfv.transform([query]).todense()
+    scores = np.dot(query_vec, tf_matrix)                
+    ranked_scores_and_doc_ids = \
+    sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
+
+    """Finds the number of matched documents for printing"""
+    line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:"
+    matches.append(line)
+
+    """Finds information for printing results"""
+    for score, i in ranked_scores_and_doc_ids:
+        score = "{:.4f}".format(score)
+        header = documents[i].split('mv_title')[1]                              #Finds the header of an article for printing results.
+        body = documents[i].split('mv_title')[2]                                #Finds the body of the texct
+        documents_dict[header] = body                                           #We might not need this                                                                                          
+        line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n" + "Here is the review: " + body
+        matches.append(line)
+        graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
+
+    """Finds themes"""
+    f = open("document.txt", "a") #document from which extractor will create themes
+    f.write(str(snippets))
+    f.close()
+    keyphrases = extractor() #retrieves the themes and weights from extractor
+    keyphrases_str = '\n'.join(str(v) for v in keyphrases)
+            
+    """I'm sure this can be done better but just wanted to clean up the display in webGUI"""
+    keyphrases_str = re.sub("\(\'", "", keyphrases_str)
+    keyphrases_str = re.sub("\)", "", keyphrases_str)
+    keyphrases_str = re.sub("\'", "", keyphrases_str)
+    matches.append("Themes:\n" + keyphrases_str)
+
+    return matches        
 
 def generate_query_plot(query, graph_matches):
 
@@ -166,8 +143,8 @@ def generate_query_plot(query, graph_matches):
     #bar plot
     fig2 = plt.figure()
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80) # labels are rotated
-    plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
+    plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
     plt.savefig(f'static/query_{query}_plot_bar.png')
 
 def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
