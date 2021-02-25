@@ -17,24 +17,23 @@
             <input type="submit" value="Search">
         </form>
       
-	<table style="float:left;"> 
+	<table style="float:top;"> 
 		<!--insert the query plot-->
 		<tr>
-			<td></td>
-			<td align= "right"><font face="Courier New" size='2' color="black"><i>Your query has the following adjective distribution</i></font><img src="./static/adj_{{ query }}_plot_bar.png" style="width: 500px; height 100%" align="right"></td>
+			<td><font face="Courier New" size='2' color="black"><i>Your query has the following adjective distribution</i></font><img src="./static/adj_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"></td>
                 
-                		<td align= "middle"><font face="Courier New" size='2' color="black"><i>Your query has the following verb distribution</i></font><img src="./static/verb_{{ query }}_plot_bar.png" style="width: 500px; height 100%" align="right"></td>
+                		<td><font face="Courier New" size='2' color="black"><i>Your query has the following verb distribution</i></font><img src="./static/verb_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"></td>
                 
                 
-                		<td align= "left"><font face="Courier New" size='2' color="black"><i>Your query has the following theme distribution</i></font><img src="./static/theme_plot.png" style="width: 600px; height 100%; float:right;margin-left=30px; border: 5px solid #555;">
-
+                		<td><font face="Courier New" size='2' color="black"><i>Your query has the following theme distribution</i></font><img src="./static/theme_plot.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"">
+</table>
 		<tr>
 
    <!--Go through each item in the "matches" variable sent from
                 search() function in the Flask app-->
-            
+            <br>
             {% for item in matches | unique %}
-                <p style="width:800px;margin-top: 0.2em;
+                <p style="margin-top: 0.2em;
   margin-bottom: 0.2em;">{{ item }}</p>
                 <br>
             <!--End for loop-->
