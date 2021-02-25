@@ -127,7 +127,7 @@ def relevance_search(orig_query, query):
     f = open("document.txt", "w") #document from which extractor will create themes
     f.write(str(snippets))
     f.close()
-    keyphrases = extractor(query) #retrieves the themes and weights from extractor
+    keyphrases = extractor(orig_query) #retrieves the themes and weights from extractor
     keyphrases_str = '\n'.join(str(v) for v in keyphrases)
             
    
