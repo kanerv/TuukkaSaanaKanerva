@@ -5,7 +5,7 @@
     </head>
     <body style="background-color:rgba(104, 171, 71, 0.5);margin-left:150px; margin-right:150px;">
         <h1 style="border:2px solid rgb(64, 114, 63); text-align:center; font-family:'Courier New';">Rotten Linguist's Film Review Search</h1>
-	  <p style="text-align:center; font-family:'Courier New'">This search engine searches film reviews.<br>
+	  <p style="text-align:center; font-family:'Courier New'">This search engine searches film reviews from <a href="https://www.rottentomatoes.com">rottentomatoes.com</a> top 500 movies from 2016-2020<br>
        
 	   <!--Reload the page with variable "query" in the URL-->
         <form style="text-align:center; font-family:'Courier New'">
@@ -20,12 +20,12 @@
 	<table style="float:top;"> 
 		<!--insert the query plot-->
 		<tr>
-			<td><font face="Courier New" size='2' color="black"><i>Your query has the following adjective distribution</i></font><img src="./static/adj_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"></td>
+			<td><font face="Courier New" size='2' color="black"><img src="./static/adj_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"></td>
                 
-                		<td><font face="Courier New" size='2' color="black"><i>Your query has the following verb distribution</i></font><img src="./static/verb_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"></td>
+                		<td><font face="Courier New" size='2' color="black"><img src="./static/verb_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"></td>
                 
                 
-                		<td><font face="Courier New" size='2' color="black"><i>Your query has the following theme distribution</i></font><img src="./static/theme_{{ query }}_plot.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"">
+                		<td><font face="Courier New" size='2' color="black"></font><img src="./static/theme_{{ query }}_plot.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid #555;align:right"">
 </table>
 		<tr>
 
