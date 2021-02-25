@@ -173,6 +173,7 @@ def generate_adj_plot(query, graph_matches):
     
     #bar plot
     fig2 = plt.figure()
+    plt.title("Your query has the following adjective distribution")
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
@@ -195,6 +196,7 @@ def generate_verb_plot(query, graph_matches):
 
     #bar plot
     fig2 = plt.figure()
+    plt.title("Your query has the following verb distribution")
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
@@ -203,7 +205,7 @@ def generate_verb_plot(query, graph_matches):
 
 def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
     fig = plt.figure()
-    plt.title("Themes weighted: ")
+    plt.title("Your query has the following theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='g')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.50)                                  # if you comment this line, your labels in the x-axis will be cutted
