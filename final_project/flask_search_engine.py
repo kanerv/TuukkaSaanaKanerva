@@ -105,7 +105,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Finds the number of matched documents for printing"""
-    line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:<br>"
+    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:</h4><br>"
     matches.append(line)
 
     """Finds information for printing results"""
@@ -118,7 +118,7 @@ def relevance_search(orig_query, query):
         doc_spacy = nlp(body)
         html = displacy.render(doc_spacy, style="ent", minify=True)
                                                                  
-        line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n\n" + "<br>Here is the review:<br>" + html
+        line = "<h4 style=font-family:'Courier New';>The score of <i>" + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
 
         matches.append(line)
         graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
