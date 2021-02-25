@@ -11,6 +11,7 @@ import os
 import ast
 import pke
 import spacy
+from spacy import displacy
 
 
 mlp.use('Agg')
@@ -104,7 +105,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Finds the number of matched documents for printing"""
-    line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:"
+    line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:<br>"
     matches.append(line)
 
     """Finds information for printing results"""
@@ -113,8 +114,12 @@ def relevance_search(orig_query, query):
         header = documents[i].split('mv_title')[1]                              #Finds the header of an article for printing results.
         body = documents[i].split('mv_title')[2]                                #Finds the body of the texct
         snippets.append(body)
-        documents_dict[header] = body                                           #We might not need this                                                                                          
-        line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n\n" + "Here is the review:\n" + body + "\n"
+        documents_dict[header] = body                                           #We might not need this                                 
+        doc_spacy = nlp(body)
+        html = displacy.render(doc_spacy, style="ent", minify=True)
+                                                                 
+        line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n\n" + "<br>Here is the review:<br>" + html
+
         matches.append(line)
         graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
@@ -122,17 +127,10 @@ def relevance_search(orig_query, query):
     f = open("document.txt", "w") #document from which extractor will create themes
     f.write(str(snippets))
     f.close()
-    keyphrases = extractor() #retrieves the themes and weights from extractor
+    keyphrases = extractor(query) #retrieves the themes and weights from extractor
     keyphrases_str = '\n'.join(str(v) for v in keyphrases)
             
-    """I'm sure this can be done better but just wanted to clean up the display in webGUI"""
-    matches.append("Themes:\n")
-    for i in keyphrases:
-        i = str(i)
-        i = re.sub("\(\'", "", i)
-        i = re.sub("\)", "", i)
-        i = re.sub("\'", "", i)
-        matches.append(i)
+   
     return matches        
 
 """def generate_query_plot(query, graph_matches):
@@ -203,7 +201,7 @@ def generate_verb_plot(query, graph_matches):
     plt.savefig(f'static/verb_{query}_plot_bar.png')
 
 
-def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
+def generate_theme_plot(query, keyphrases): #creates a scatterplot by theme and weight
     fig = plt.figure()
     plt.title("Your query has the following theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='g')
@@ -214,10 +212,10 @@ def generate_theme_plot(keyphrases): #creates a scatterplot by theme and weight
     #var_1 = list(keyphrases.values())
     #var_2 = list(keyphrases.keys())
     #plt.scatter(var_1,var_2,color='C2')
-    plt.savefig(f'static/theme_plot.png')
+    plt.savefig(f'static/theme_{query}_plot.png')
     
 
-def extractor(): #extracts important words from the search results
+def extractor(query): #extracts important words from the search results
     keyphrases = []
     extractor = pke.unsupervised.TopicRank()
     extractor.load_document("document.txt", language='en')
@@ -225,6 +223,6 @@ def extractor(): #extracts important words from the search results
     extractor.candidate_weighting()
     keyphrases = extractor.get_n_best(n=10)
     theme_dict = {k:v for k, v in keyphrases}
-    generate_theme_plot(theme_dict)
+    generate_theme_plot(query, theme_dict)
     
     return keyphrases
