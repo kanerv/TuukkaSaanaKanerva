@@ -171,7 +171,8 @@ def generate_adj_plot(query, graph_matches):
         labels = top_10_adjectives
         sizes = [dist_dict[adj] for adj in top_10_adjectives]
         pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)    
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.set_title("Most frequent adjectives")
     else:
         #pie chart for all
         pie_fig = plt.figure()
@@ -179,6 +180,7 @@ def generate_adj_plot(query, graph_matches):
         sizes = dist_dict.values()
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+        ax.set_title("Most frequent adjectives")
 
     plt.savefig(f'static/adj_{query}_plot_pie.png')
 
