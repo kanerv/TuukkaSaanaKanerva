@@ -58,7 +58,7 @@ def search():
 
         #generate_query_plot(query, graph_matches)
         generate_adj_plot(query, graph_matches)
-        generate_verb_plot(query, graph_matches)
+        #generate_verb_plot(query, graph_matches)
         return render_template('index.html', matches=matches, query=query)
     
     #Returns an empty template for empty searches
@@ -105,7 +105,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Finds the number of matched documents for printing"""
-    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:</h4><br>"
+    line = "There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:<br>"
     matches.append(line)
 
     """Finds information for printing results"""
@@ -118,7 +118,7 @@ def relevance_search(orig_query, query):
         doc_spacy = nlp(body)
         html = displacy.render(doc_spacy, style="ent", minify=True)
                                                                  
-        line = "<h4 style=font-family:'Courier New';>The score of <i>" + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
+        line = "The score of " + orig_query + " is "+ score + " in the document named: " + header + "\n\n" + "<br>Here is the review:<br>" + html
 
         matches.append(line)
         graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
@@ -133,52 +133,57 @@ def relevance_search(orig_query, query):
    
     return matches        
 
-"""def generate_query_plot(query, graph_matches):
-
-    # create dictionary
-    dist_dict={}
-    for match in graph_matches:
-        dist_dict[match['name']] = len(match['content'])
-        
-    #scatterplot
-    #fig = plt.figure()
-    #plt.title("Word distribution per document \n query: "+query)
-    #var_1 = list(dist_dict.values())
-    #var_2 = list(dist_dict.keys())
-    #plt.scatter(var_1,var_2,color='C2')
-    #plt.savefig(f'static/query_{query}_plot.png')
-
-    #bar plot
-    #fig2 = plt.figure()
-    #plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
-    #plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
-    #plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
-    #plt.savefig(f'static/query_{query}_plot_bar.png')"""
-
 def generate_adj_plot(query, graph_matches):
-    # create dictionary
+    #creates a dictionary
     dist_dict={}
     adjectives = []
     for match in graph_matches:
         doc = nlp(match['content'])
         adjectives = [token.lemma_ for token in doc if token.pos_ == "ADJ"]
-        #print(adjectives)
+        print(adjectives)
         for adj in adjectives:
             if adj in dist_dict.keys():
                 dist_dict[adj] = dist_dict[adj] + 1
             else:
                 dist_dict[adj] = 1
-    
-    #bar plot
-    fig2 = plt.figure()
-    plt.title("Your query has the following adjective distribution")
-    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
-    plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig(f'static/adj_{query}_plot_bar.png')
+                
+    #finds most interesting adjectives:
+    ranked_adjectives = []
+    highest_adj_count = 0
+    for adj in dist_dict.keys():
+        if dist_dict[adj] >= highest_adj_count:
+            ranked_adjectives.insert(0, adj)
+            highest_adj_count = dist_dict[adj]
+        else:
+            ranked_adjectives.append(adj)
+
+    #creates pie charts for top10 or all 
+    if len(ranked_adjectives) >= 10:
+        top_10_adjectives = []
+        remaining_adj_count = 0
+        top_10_adjectives = ranked_adjectives[0:9]
+        for adj in ranked_adjectives[10:]:
+            remaining_adj_count =+ dist_dict[adj]
+        dist_dict['Other'] = remaining_adj_count
+        top_10_adjectives.append('Other')
+        #pie chart for top 10 adjectives:
+        pie_fig = plt.figure()
+        labels = top_10_adjectives
+        sizes = [dist_dict[adj] for adj in top_10_adjectives]
+        pie_fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)    
+    else:
+        #pie chart for all
+        pie_fig = plt.figure()
+        labels = dist_dict.keys()
+        sizes = dist_dict.values()
+        pie_fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+
+    plt.savefig(f'static/adj_{query}_plot_pie.png')
 
     
-def generate_verb_plot(query, graph_matches):
+"""def generate_verb_plot(query, graph_matches):
     #create dictionary
     dist_dict={}
     verbs = []
@@ -198,7 +203,7 @@ def generate_verb_plot(query, graph_matches):
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig(f'static/verb_{query}_plot_bar.png')
+    plt.savefig(f'static/verb_{query}_plot_bar.png')"""
 
 
 def generate_theme_plot(query, keyphrases): #creates a scatterplot by theme and weight
