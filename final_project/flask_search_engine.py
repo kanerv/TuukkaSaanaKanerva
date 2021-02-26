@@ -53,7 +53,7 @@ def search():
 
     #If query is not found in the data, return a template for no results
     if query not in terms:
-        return render_template('indexnoresults.html', matches=[])
+        return render_template('indexnoresults.html', matches=[], query=query)
     #If query exists (i.e. is not None)
     elif query:                               
         query = query.lower()
