@@ -51,19 +51,21 @@ def search():
     global choice
     choice = request.args.get('choice')
 
-    #If query is not found in the data, return a template for no results
-    if query not in terms:
-        return render_template('indexnoresults.html', matches=[], query=query)
     #If query exists (i.e. is not None)
-    elif query:                               
-        query = query.lower()
-        matches = test_query(query)
+    if query:
+            #If query is not found in the data, return a template for no results
+        if query not in terms:
+            return render_template('indexnoresults.html', matches=[], query=query)
 
-        #generate_query_plot(query, graph_matches)
-        generate_adj_plot(query, graph_matches)
-        #generate_verb_plot(query, graph_matches)
+        else:
+            query = query.lower()
+            matches = test_query(query)
 
-        return render_template('index.html', matches=matches, query=query)
+            #generate_query_plot(query, graph_matches)
+            generate_adj_plot(query, graph_matches)
+            #generate_verb_plot(query, graph_matches)
+
+            return render_template('index.html', matches=matches, query=query)
     
     #Returns an empty template for empty searches
     else:
