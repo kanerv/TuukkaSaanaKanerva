@@ -59,6 +59,7 @@ def search():
         #generate_query_plot(query, graph_matches)
         generate_adj_plot(query, graph_matches)
         #generate_verb_plot(query, graph_matches)
+
         return render_template('index.html', matches=matches, query=query)
     
     #Returns an empty template for empty searches
@@ -77,7 +78,7 @@ def test_query(query):
                 matches = relevance_search(query, query)            #searches for query
                 
             else:                   #if query is not found in the data
-                line = "Search term " + query + " not found."
+                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
                 matches.append(line)
 
         elif choice == "wildcard":
@@ -89,7 +90,7 @@ def test_query(query):
                 matches = relevance_search(query, new_query_string) #searches for the query
                    
             else:                   #if query is not found in the data
-                line = "Search term " + query + " not found."
+                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
                 matches.append(line)
                 
     return matches
@@ -128,9 +129,8 @@ def relevance_search(orig_query, query):
     f.write(str(snippets))
     f.close()
     keyphrases = extractor(orig_query) #retrieves the themes and weights from extractor
-    keyphrases_str = '\n'.join(str(v) for v in keyphrases)
-            
-   
+    keyphrases_str = '\n'.join(str(v) for v in keyphrases)    
+               
     return matches        
 
 def generate_adj_plot(query, graph_matches):
@@ -208,12 +208,13 @@ def generate_adj_plot(query, graph_matches):
     plt.savefig(f'static/verb_{query}_plot_bar.png')"""
 
 
+
 def generate_theme_plot(query, keyphrases): #creates a scatterplot by theme and weight
     fig = plt.figure()
     plt.title("Your query has the following theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
-    plt.gcf().subplots_adjust(bottom=0.50)                                  # if you comment this line, your labels in the x-axis will be cutted
+    plt.gcf().subplots_adjust(bottom=0.50)                      # if you comment this line, your labels in the x-axis will be cutted
     
 
     #var_1 = list(keyphrases.values())
