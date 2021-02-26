@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rotten Linguist's film review search</title>
+    </head>
+    <body style="background-color:rgba(225, 99, 67, 0.8);">
+        <h1 style="border:2px solid rgba(225, 101, 71, 1); text-align:center; font-family:'Courier New';">Rotten Linguist's Film Review Search</h1>
+	  <p style="text-align:center; font-family:'Courier New'">This search engine searches film reviews from <a href="https://www.rottentomatoes.com">rottentomatoes.com</a> top 500 movies from 2016-2020<br>
+       
+	   <!--Reload the page with variable "query" in the URL-->
+        <form style="text-align:center; font-family:'Courier New'">
+            <input type="radio" id="exact" name="choice" value="exact" checked>
+            <label for="exact">Exact match (e.g. movie)</label><br>
+            <input type="radio" id="wildcard" name="choice" value="wildcard">
+            <label for="wildcard">Wildcard search (e.g. mov)</label><br>
+            <input type="text" name="query" autofocus>
+            <input type="submit" value="Search">
+        </form>
+
+	<hr>
+            <br>
+		<h4 style="font-family:'Courier New'">No matches found for query {{query}}</h4>
+		<br>
+    </body>
+</html>

@@ -50,9 +50,12 @@ def search():
     #Get choice of search engine from URL variable
     global choice
     choice = request.args.get('choice')
-    
+
+    #If query is not found in the data, return a template for no results
+    if query not in terms:
+        return render_template('indexnoresults.html', matches=[])
     #If query exists (i.e. is not None)
-    if query:                               
+    elif query:                               
         query = query.lower()
         matches = test_query(query)
 
@@ -77,9 +80,9 @@ def test_query(query):
             if query in terms:      #if query is found in the data
                 matches = relevance_search(query, query)            #searches for query
                 
-            else:                   #if query is not found in the data
-                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
-                matches.append(line)
+#            else:                   #if query is not found in the data
+#                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
+#                matches.append(line)
 
         elif choice == "wildcard":
             wc_query = query+".*"   #adds the wildcard notation and finds matching words from the data
@@ -89,9 +92,9 @@ def test_query(query):
             if wc_words:            #if words matching the query exist
                 matches = relevance_search(query, new_query_string) #searches for the query
                    
-            else:                   #if query is not found in the data
-                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
-                matches.append(line)
+#            else:                   #if query is not found in the data
+#                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
+#                matches.append(line)
                 
     return matches
 
