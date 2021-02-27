@@ -41,6 +41,8 @@ nlp = spacy.load('en_core_web_sm') #loads a small english module
 def search():
     os.system('rm -f static/*.png')
     global matches, graph_matches
+    matches = []
+    graph_matches = []
     
     #Get query from URL variable
     query = request.args.get('query')
@@ -76,10 +78,14 @@ def search():
 
             if choice == "multiword":
                 """NOT WORKING YET"""
-                new_query_string = re.sub("\s", " ", query)
+                new_query_string = re.sub("_", " ", query)
+                print("new query: ", new_query_string)
+                mw_documents = re.sub(new_query_string, query, documents)
+                tf_matrix = tfv.fit_transform(mw_documents).T.todense()
                 print("doing a multiword search for: ", new_query_string)
                 matches, graph_matches = relevance_search(query, new_query_string) #searches for multiword query
-            
+                tf_matrix = tfv.fit_transform(documents).T.todense()
+
             generate_adj_plot(query, graph_matches)
             #generate_verb_plot(query, graph_matches)
             
