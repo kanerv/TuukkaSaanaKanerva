@@ -37,7 +37,6 @@ terms = tfv.get_feature_names()
 global nlp, doc
 nlp = spacy.load('en_core_web_sm') #loads a small english module
 
-
 @app.route('/search')
 def search():
     os.system('rm -f static/*.png')
@@ -51,11 +50,18 @@ def search():
     global choice
     choice = request.args.get('choice')
 
+    #Defining variables for wildcard search
+    wc_query = query+".*"   #adds the wildcard notation and finds matching words from the data
+    global wc_words
+    wc_words = [w for w in terms if re.fullmatch(wc_query, w)]  #this line is copied from the group "wewhoshallnotbenamed"
+
     #If query exists (i.e. is not None)
     if query:
         #If query is not found in the data, return a template for no results
         if query.lower() not in terms and choice == "exact":
             return render_template('indexnoresults.html', matches=[], query=query)
+        if not wc_words and choice == "wildcard":
+            return render_template('indexnoresults.html', matches=[], query=query)            
 
         else:
             query = query.lower()
@@ -81,22 +87,12 @@ def test_query(query):
         if choice == "exact":
             if query in terms:      #if query is found in the data
                 matches = relevance_search(query, query)            #searches for query
-                
-#            else:                   #if query is not found in the data
-#                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
-#                matches.append(line)
 
         elif choice == "wildcard":
-            wc_query = query+".*"   #adds the wildcard notation and finds matching words from the data
-            wc_words = [w for w in terms if re.fullmatch(wc_query, w)]      #this line is copied from the group "wewhoshallnotbenamed"
             new_query_string = " ".join(wc_words)   #creates a new query from the matching words
             
             if wc_words:            #if words matching the query exist
                 matches = relevance_search(query, new_query_string) #searches for the query
-                   
-            else:                   #if query is not found in the data
-                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
-                matches.append(line)
                 
     return matches
 
