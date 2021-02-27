@@ -176,6 +176,7 @@ def generate_adj_plot(query, graph_matches):
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
         ax.set_title("Most frequent adjectives")
 
+    print("adjectives for ", query, " are: ", labels)
     plt.savefig(f'static/adj_{query}_plot_pie.png')
 
     
