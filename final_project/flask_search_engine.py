@@ -58,7 +58,7 @@ def search():
     """If query exists (i.e. is not None)"""
     if query:
         
-        """If query is not found in the data, return a template for no results"""
+        #If query is not found in the data, return a template for no results"""
         if query.lower() not in terms and choice == "exact":
             return render_template('indexnoresults.html', matches=[], query=query)
         if not wc_words and choice == "wildcard":
@@ -74,7 +74,7 @@ def search():
             
             return render_template('index.html', matches=matches, query=query)
     
-    """Returns an empty template for empty searches"""
+    #Returns an empty template for empty searches"""
     else:
         return render_template('indexempty.html', matches=[])
 
@@ -213,7 +213,7 @@ def generate_adj_plot(query, graph_matches):
 
 
 def generate_theme_plot(query, keyphrases):
-    """"Creates a scatterplot by theme and weight""""
+    """Creates a scatterplot by theme and weight"""
     fig = plt.figure()
     plt.title("Your query has the following theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
@@ -228,7 +228,7 @@ def generate_theme_plot(query, keyphrases):
     
 
 def extractor(query):
-    """"Extracts important words from the search results""""
+    """Extracts important words from the search results"""
     keyphrases = []
     extractor = pke.unsupervised.TopicRank()
     extractor.load_document("document.txt", language='en')
