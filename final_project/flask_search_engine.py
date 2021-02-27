@@ -34,17 +34,18 @@ tf_matrix = tfv.fit_transform(documents).T.todense()
 terms = tfv.get_feature_names()
 
 """Initializes spacy"""
-global nlp, doc
+global nlp
 nlp = spacy.load('en_core_web_sm') #loads a small english module
 
 @app.route('/search')
 def search():
     os.system('rm -f static/*.png')
-    global matches
-    matches = []
+    global matches, graph_matches
     
     #Get query from URL variable
     query = request.args.get('query')
+    query = str(query)
+    query = query.lower()
     
     #Get choice of search engine from URL variable
     global choice
@@ -59,47 +60,38 @@ def search():
     if query:
         
         #If query is not found in the data, return a template for no results"""
-        if query.lower() not in terms and choice == "exact":
+        if query not in terms and choice == "exact" or not wc_words and choice == "wildcard":
             return render_template('indexnoresults.html', matches=[], query=query)
-        if not wc_words and choice == "wildcard":
-            return render_template('indexnoresults.html', matches=[], query=query)            
 
-        else:
-            query = query.lower()
-            matches = test_query(query)
+        #If query is found, search and return a template for results
+        elif query in terms or wc_words:
+            if choice == "exact":
+                print("doing an exact search for: ", query)
+                matches, graph_matches = relevance_search(query, query)            #searches for exact query
 
-            #generate_query_plot(query, graph_matches)
+            if choice == "wildcard":
+                new_query_string = " ".join(wc_words)   #creates a new query from the matching words
+                print("doing a wildcard search for: ", new_query_string)
+                matches, graph_matches = relevance_search(query, new_query_string) #searches for wildcard query
+
             generate_adj_plot(query, graph_matches)
             #generate_verb_plot(query, graph_matches)
             
             return render_template('index.html', matches=matches, query=query)
+
+        #Show empty template in the beginning
+        else:
+            return render_template('indexempty.html', matches=[])
     
     #Returns an empty template for empty searches"""
     else:
         return render_template('indexempty.html', matches=[])
 
 
-def test_query(query):
-    matches = []
-    global graph_matches
-    graph_matches = []
-    
-    if choice:
-        if choice == "exact":
-            if query in terms:       #if query is found in the data
-                matches = relevance_search(query, query)            #searches for query
-
-        elif choice == "wildcard":
-            new_query_string = " ".join(wc_words)   #creates a new query from the matching words
-            
-            if wc_words:            #if words matching the query exist
-                matches = relevance_search(query, new_query_string) #searches for the query
-                
-    return matches
-
-
 def relevance_search(orig_query, query):
     snippets = []
+    matches = []
+    graph_matches = []
             
     """Creates a vector from the query, finds matching documents and ranks them"""
     query_vec = tfv.transform([query]).todense()
@@ -118,22 +110,22 @@ def relevance_search(orig_query, query):
         body = documents[i].split('mv_title')[2]                #Finds the body of the texct
         snippets.append(body)
         documents_dict[header] = body                           #We might not need this                                 
-        doc_spacy = nlp(body)
-        html = displacy.render(doc_spacy, style="ent", minify=True)
+        doc_html = nlp(body)
+        html = displacy.render(doc_html, style="ent", minify=True)
                                                                  
         line = "<h4 style=font-family:'Courier New';>The score of <i>" + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
 
         matches.append(line)
         graph_matches.append({'name':header,'content':documents[i],'pltpath':header+'_plt.png'})
 
-    """Finds themes"""
+    """Finds themes and creates a theme plot"""
     f = open("document.txt", "w") #document from which extractor will create themes
     f.write(str(snippets))
     f.close()
     keyphrases = extractor(orig_query) #retrieves the themes and weights from extractor
     keyphrases_str = '\n'.join(str(v) for v in keyphrases)    
                
-    return matches        
+    return matches, graph_matches        
 
 def generate_adj_plot(query, graph_matches):
     """Generates a pieplot of the most frequent adjectives in the search results"""
@@ -143,7 +135,6 @@ def generate_adj_plot(query, graph_matches):
     for match in graph_matches:
         doc = nlp(match['content'])
         adjectives = [token.lemma_ for token in doc if token.pos_ == "ADJ"]
-        print(adjectives)
         for adj in adjectives:
             if adj in dist_dict.keys():
                 dist_dict[adj] = dist_dict[adj] + 1
