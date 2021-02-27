@@ -53,8 +53,8 @@ def search():
 
     #If query exists (i.e. is not None)
     if query:
-            #If query is not found in the data, return a template for no results
-        if query not in terms and choice == "exact":
+        #If query is not found in the data, return a template for no results
+        if query.lower() not in terms and choice == "exact":
             return render_template('indexnoresults.html', matches=[], query=query)
 
         else:
