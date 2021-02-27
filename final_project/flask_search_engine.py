@@ -54,7 +54,7 @@ def search():
     #If query exists (i.e. is not None)
     if query:
             #If query is not found in the data, return a template for no results
-        if query not in terms:
+        if query not in terms and choice == "exact":
             return render_template('indexnoresults.html', matches=[], query=query)
 
         else:
@@ -94,9 +94,9 @@ def test_query(query):
             if wc_words:            #if words matching the query exist
                 matches = relevance_search(query, new_query_string) #searches for the query
                    
-#            else:                   #if query is not found in the data
-#                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
-#                matches.append(line)
+            else:                   #if query is not found in the data
+                line = "<h4 style=font-family:'Courier New';>Search term <i>" + query + "</i> not found.</h4>"
+                matches.append(line)
                 
     return matches
 
