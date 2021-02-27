@@ -74,6 +74,12 @@ def search():
                 print("doing a wildcard search for: ", new_query_string)
                 matches, graph_matches = relevance_search(query, new_query_string) #searches for wildcard query
 
+            if choice == "multiword":
+                """NOT WORKING YET"""
+                new_query_string = re.sub("\s", " ", query)
+                print("doing a multiword search for: ", new_query_string)
+                matches, graph_matches = relevance_search(query, new_query_string) #searches for multiword query
+            
             generate_adj_plot(query, graph_matches)
             #generate_verb_plot(query, graph_matches)
             
