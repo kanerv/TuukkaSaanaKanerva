@@ -16,7 +16,7 @@ from spacy import displacy
 
 mlp.use('Agg')
 
-#Initialize Flask instance
+"""Initialize Flask instance"""
 app = Flask(__name__)
 
 """Retrieves data and stores it in a list called documents"""
@@ -51,13 +51,14 @@ def search():
     choice = request.args.get('choice')
 
     #Defining variables for wildcard search
-    wc_query = query+".*"   #adds the wildcard notation and finds matching words from the data
+    wc_query = query+".*"                                       #adds the wildcard notation and finds matching words from the data
     global wc_words
     wc_words = [w for w in terms if re.fullmatch(wc_query, w)]  #this line is copied from the group "wewhoshallnotbenamed"
 
-    #If query exists (i.e. is not None)
+    """If query exists (i.e. is not None)"""
     if query:
-        #If query is not found in the data, return a template for no results
+        
+        """If query is not found in the data, return a template for no results"""
         if query.lower() not in terms and choice == "exact":
             return render_template('indexnoresults.html', matches=[], query=query)
         if not wc_words and choice == "wildcard":
@@ -70,10 +71,10 @@ def search():
             #generate_query_plot(query, graph_matches)
             generate_adj_plot(query, graph_matches)
             #generate_verb_plot(query, graph_matches)
-
+            
             return render_template('index.html', matches=matches, query=query)
     
-    #Returns an empty template for empty searches
+    """Returns an empty template for empty searches"""
     else:
         return render_template('indexempty.html', matches=[])
 
@@ -85,7 +86,7 @@ def test_query(query):
     
     if choice:
         if choice == "exact":
-            if query in terms:      #if query is found in the data
+            if query in terms:       #if query is found in the data
                 matches = relevance_search(query, query)            #searches for query
 
         elif choice == "wildcard":
@@ -113,10 +114,10 @@ def relevance_search(orig_query, query):
     """Finds information for printing results"""
     for score, i in ranked_scores_and_doc_ids:
         score = "{:.4f}".format(score)
-        header = documents[i].split('mv_title')[1]                              #Finds the header of an article for printing results.
-        body = documents[i].split('mv_title')[2]                                #Finds the body of the texct
+        header = documents[i].split('mv_title')[1]              #Finds the header of an article for printing results.
+        body = documents[i].split('mv_title')[2]                #Finds the body of the texct
         snippets.append(body)
-        documents_dict[header] = body                                           #We might not need this                                 
+        documents_dict[header] = body                           #We might not need this                                 
         doc_spacy = nlp(body)
         html = displacy.render(doc_spacy, style="ent", minify=True)
                                                                  
@@ -135,7 +136,8 @@ def relevance_search(orig_query, query):
     return matches        
 
 def generate_adj_plot(query, graph_matches):
-    #creates a dictionary
+    """Generates a pieplot of the most frequent adjectives in the search results"""
+    #Creates a dictionary
     dist_dict={}
     adjectives = []
     for match in graph_matches:
@@ -148,7 +150,7 @@ def generate_adj_plot(query, graph_matches):
             else:
                 dist_dict[adj] = 1
                 
-    #finds most interesting adjectives:
+    #Finds most interesting adjectives
     ranked_adjectives = []
     highest_adj_count = 0
     for adj in dist_dict.keys():
@@ -158,7 +160,7 @@ def generate_adj_plot(query, graph_matches):
         else:
             ranked_adjectives.append(adj)
 
-    #creates pie charts for top10 or all 
+    #Creates pie charts for top10 or all
     if len(ranked_adjectives) >= 10:
         top_10_adjectives = []
         remaining_adj_count = 0
@@ -167,7 +169,7 @@ def generate_adj_plot(query, graph_matches):
             remaining_adj_count =+ dist_dict[adj]
         dist_dict['Other'] = remaining_adj_count
         top_10_adjectives.append('Other')
-        #pie chart for top 10 adjectives:
+        #Pie chart for top 10 adjectives
         pie_fig = plt.figure()
         labels = top_10_adjectives
         sizes = [dist_dict[adj] for adj in top_10_adjectives]
@@ -175,7 +177,7 @@ def generate_adj_plot(query, graph_matches):
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
     else:
-        #pie chart for all
+        #Pie chart for all
         pie_fig = plt.figure()
         labels = dist_dict.keys()
         sizes = dist_dict.values()
@@ -210,12 +212,13 @@ def generate_adj_plot(query, graph_matches):
 
 
 
-def generate_theme_plot(query, keyphrases): #creates a scatterplot by theme and weight
+def generate_theme_plot(query, keyphrases):
+    """"Creates a scatterplot by theme and weight""""
     fig = plt.figure()
     plt.title("Your query has the following theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
-    plt.gcf().subplots_adjust(bottom=0.50)                      # if you comment this line, your labels in the x-axis will be cutted
+    plt.gcf().subplots_adjust(bottom=0.50)              # if you comment this line, your labels in the x-axis will be cutted
     
 
     #var_1 = list(keyphrases.values())
@@ -224,7 +227,8 @@ def generate_theme_plot(query, keyphrases): #creates a scatterplot by theme and 
     plt.savefig(f'static/theme_{query}_plot.png')
     
 
-def extractor(query): #extracts important words from the search results
+def extractor(query):
+    """"Extracts important words from the search results""""
     keyphrases = []
     extractor = pke.unsupervised.TopicRank()
     extractor.load_document("document.txt", language='en')
