@@ -116,20 +116,24 @@ def relevance_search(orig_query, query):
     matches.append(line)
 
     """Finds information for printing results"""
-    for score, i in ranked_scores_and_doc_ids:
-        score = "{:.4f}".format(score)
-        header = documents[i].split('mv_title')[1]              #Finds the header of an article for printing results.
-        body = documents[i].split('mv_title')[2]                #Finds the body of the texct
-        print(body)
-        snippets.append(body)
-        documents_dict[header] = body                           #We might not need this                                 
-        doc_html = nlp(body)
-        html = displacy.render(doc_html, style="ent", minify=True)
+    try:
+        for score, i in ranked_scores_and_doc_ids:
+            score = "{:.4f}".format(score)
+            header = documents[i].split('mv_title')[1]              #Finds the header of an article for printing results.
+            body = documents[i].split('mv_title')[2]                #Finds the body of the texct
+            print(body)
+            snippets.append(body)
+            documents_dict[header] = body                           #We might not need this                                 
+            doc_html = nlp(body)
+            html = displacy.render(doc_html, style="ent", minify=True)
                                                                  
-        line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
+            line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
 
+            matches.append(line)
+            graph_matches.append({'name':header,'content':body,'pltpath':header+'_plt.png'})
+    except IndexError:
+        line = "There was a problem with the search"
         matches.append(line)
-        graph_matches.append({'name':header,'content':body,'pltpath':header+'_plt.png'})
 
     """Finds themes and creates a theme plot"""
     f = open("document.txt", "w") #document from which extractor will create themes
