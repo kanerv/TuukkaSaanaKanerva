@@ -126,7 +126,7 @@ def relevance_search(orig_query, query):
         doc_html = nlp(body)
         html = displacy.render(doc_html, style="ent", minify=True)
                                                                  
-        line = "<h4 style=font-family:'Courier New';>The score of <i>" + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
+        line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
 
         matches.append(line)
         graph_matches.append({'name':header,'content':body,'pltpath':header+'_plt.png'})
