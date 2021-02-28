@@ -227,7 +227,7 @@ def generate_theme_plot(query, keyphrases):
     plt.title("Your query has the following theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
-    plt.gcf().subplots_adjust(bottom=0.50)              # if you comment this line, your labels in the x-axis will be cutted
+    #plt.gcf().subplots_adjust(bottom=0.50)              # if you comment this line, your labels in the x-axis will be cutted
     
 
     #var_1 = list(keyphrases.values())
