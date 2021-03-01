@@ -128,7 +128,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Finds the number of matched documents for printing"""
-    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:</h4><br>"
+    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query <i>" + query +"</i>:</h4><br>"
     matches.append(line)
 
     """Finds information for printing results"""
@@ -154,7 +154,7 @@ def relevance_search(orig_query, query):
 def generate_distribution_plot(query, graph_matches):
     """Generates a barplot of the distribution of the query word in the movie reviews"""
     fig1 = plt.figure()
-    plt.title("Word distribution per review for query '" + query + "'")
+    plt.title("Distribution of your query per review")
     dist_dict1={}
     for match in graph_matches:
         dist_dict1[match['name']] = len(match['content']) 
@@ -245,7 +245,7 @@ def generate_adj_plot(query, graph_matches):
 def generate_theme_plot(query, keyphrases):
     """Creates a scatterplot by theme and weight"""
     fig = plt.figure()
-    plt.title("Your query has the following theme distribution")
+    plt.title("Theme distribution of your query")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.50)              # if you comment this line, your labels in the x-axis will be cutted
