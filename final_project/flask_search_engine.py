@@ -89,7 +89,7 @@ def search():
             if choice == "multiword":
                 
                 """NOT WORKING YET"""
-                
+            
                 new_query_string = re.sub("_", " ", query)
                 print("new query: ", new_query_string)
                 mw_documents = re.sub(new_query_string, query, documents)
