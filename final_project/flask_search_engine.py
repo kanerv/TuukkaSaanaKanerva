@@ -86,26 +86,7 @@ def search():
                 generate_adj_plot("wildcard_"+query, graph_matches) #generates an adjective plot
                 extractor("wildcard_"+query, graph_matches)         #extracts themes and generates a theme plot
                 #generate_verb_plot(query, graph_matches)
-                return render_template('index.html', matches=matches, query="wildcard_"+query)
-
-            if choice == "multiword":
-                
-                """NOT WORKING YET"""
-            
-                new_query_string = re.sub("_", " ", query)
-                print("new query: ", new_query_string)
-                mw_documents = re.sub(new_query_string, query, documents)
-                tf_matrix = tfv.fit_transform(mw_documents).T.todense()
-                print("doing a multiword search for: ", new_query_string)
-                matches, graph_matches = relevance_search(query, new_query_string) #searches for multiword query
-                tf_matrix = tfv.fit_transform(documents).T.todense()
-
-                generate_distribution_plot("multiword_"+query, graph_matches)
-                generate_adj_plot("multiword_"+query, graph_matches)
-                extractor("multiword_"+query, graph_matches)
-                #generate_verb_plot(query, graph_matches)
-                return render_template('index.html', matches=matches, query="multiword_"+query)
-            
+                return render_template('index.html', matches=matches, query="wildcard_"+query)            
 
         #Show empty template in the beginning
         else:

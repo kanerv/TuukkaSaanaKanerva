@@ -6,9 +6,9 @@
     <body style="background-color:rgba(225, 99, 67, 0.8);">
         <h1 style="border:2px solid rgba(225, 101, 71, 1); text-align:center; font-family:'Courier New';">Rotten Linguist's Film Review Search</h1>
 	  <p style="text-align:center; font-family:'Courier New'">This search engine searches film reviews from <a href="https://www.rottentomatoes.com">rottentomatoes.com</a> top 500 movies from 2016-2020<br>
+
+<!--Tomato emoji-->
 <h1 style= text-align:center>&#127813;</h1>
-<!--<img src="{{url_for('static', filename='tomatoes.jpg')}}align="middle" />
-<img src="tomato.png" alt="tomato" width="100" height="100"></img>-->
        
 	   <!--Reload the page with variable "query" in the URL-->
         <form style="text-align:center; font-family:'Courier New'">
@@ -16,8 +16,6 @@
             <label for="exact">Exact match (e.g. movie)</label><br>
             <input type="radio" id="wildcard" name="choice" value="wildcard">
             <label for="wildcard">Wildcard search (e.g. mov)</label><br>
-	   <input type="radio" id="multiword" name="choice" value="multiword">
-            <label for="multiword">Multiword search (e.g. superhero movie)</label><br>
             <input type="text" name="query" autofocus>
             <input type="submit" value="Search">
         </form>
