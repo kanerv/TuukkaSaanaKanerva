@@ -74,7 +74,8 @@ def search():
                 generate_distribution_plot(query, graph_matches) #generates distribution plot
                 generate_adj_plot(query, graph_matches)     #generates an adjective plot
                 extractor(query, graph_matches)             #extracts themes and generates a theme plot
-                #generate_verb_plot(query, graph_matches)
+                generate_verb_plot(query, graph_matches)    #generates a verb plot
+                generate_pos_plot(query, graph_matches)     #generates a PoS plot
                 return render_template('index.html', matches=matches, query=query)
                 
             if choice == "wildcard":
@@ -83,9 +84,10 @@ def search():
                 matches, graph_matches = relevance_search(query, new_query_string) #searches for wildcard query
 
                 generate_distribution_plot("wildcard_"+query, graph_matches) #generates distribution plot
-                generate_adj_plot("wildcard_"+query, graph_matches) #generates an adjective plot
-                extractor("wildcard_"+query, graph_matches)         #extracts themes and generates a theme plot
-                #generate_verb_plot(query, graph_matches)
+                generate_adj_plot("wildcard_"+query, graph_matches)     #generates an adjective plot
+                extractor("wildcard_"+query, graph_matches)             #extracts themes and generates a theme plot
+                generate_verb_plot("wildcard_"+query, graph_matches)    #generates a verb plot
+                generate_pos_plot("wildcard_"+query, graph_matches)     #generates a PoS plot
                 return render_template('index.html', matches=matches, query="wildcard_"+query)            
 
         #Show empty template in the beginning
@@ -192,14 +194,14 @@ def generate_adj_plot(query, graph_matches):
         labels = dist_dict.keys()
         sizes = dist_dict.values()
         pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
 
     print("adjectives for ", query, " are: ", labels)
     plt.savefig(f'static/adj_{query}_plot_pie.png')
 
     
-"""def generate_verb_plot(query, graph_matches):
+def generate_verb_plot(query, graph_matches):
     #create dictionary
     dist_dict={}
     verbs = []
@@ -219,8 +221,43 @@ def generate_adj_plot(query, graph_matches):
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='g')
     plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig(f'static/verb_{query}_plot_bar.png')"""
+    plt.savefig(f'static/verb_{query}_plot_bar.png')
 
+    #Ranks the verbs in a list according to frequency
+    ranked_verbs = []
+    highest_verb_count = 0
+    for verb in dist_dict.keys():
+        if dist_dict[verb] >= highest_verb_count:
+            ranked_verbs.insert(0, verb)
+            highest_verb_count = dist_dict[verb]
+        else:
+            ranked_verbs.append(verb)
+
+    #Creates pie charts for top10 or all verbs
+    if len(ranked_verbs) >= 10:
+        top_10_verbs = []
+        remaining_verb_count = 0
+        top_10_verbs = ranked_verbs[0:9]
+        for verb in ranked_verbs[10:]:
+            remaining_verb_count =+ dist_dict[verb]
+        dist_dict['Other'] = remaining_verb_count
+        top_10_verbs.append('Other')
+        #Pie chart for top 10 adjectives
+        pie_fig = plt.figure()
+        labels = top_10_verbs
+        sizes = [dist_dict[verb] for verb in top_10_verbs]
+        pie_fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.set_title("Most frequent verbs")
+    else:
+        #Pie chart for all
+        pie_fig = plt.figure()
+        labels = dist_dict.keys()
+        sizes = dist_dict.values()
+        pie_fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.set_title("Most frequent verbs")
+    plt.savefig(f'static/verb_{query}_plot_pie.png')
 
 
 def generate_theme_plot(query, keyphrases):
@@ -258,3 +295,27 @@ def extractor(query, graph_matches):
     theme_dict = {k:v for k, v in keyphrases}
     generate_theme_plot(query, theme_dict)  #calls for theme plot generator
     #keyphrases_str = '\n'.join(str(v) for v in keyphrases)
+
+def generate_pos_plot(query, graph_matches):
+    """Generates a pie plot of the distribution of PoS tagged content"""
+    
+    #Creates a dictionary and uses it to track PoS frequency
+    dist_dict={}
+    pos_tags = []
+    for match in graph_matches:
+        doc = nlp(match['content'])
+        pos_tags = [token.pos_ for token in doc]
+        for tag in pos_tags:
+            if tag in dist_dict.keys():
+                dist_dict[tag] = dist_dict[tag] + 1
+            else:
+                dist_dict[tag] = 1
+
+    #Creates a bar plot for all tags
+    bar_fig = plt.figure()
+    plt.title("Part-of-speech tag distribution")
+    plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='r')
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
+    plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
+    plt.savefig(f'static/pos_{query}_plot_bar.png')
+
