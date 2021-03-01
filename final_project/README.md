@@ -12,7 +12,7 @@ The program uses Flask, so before runnign the program, you need to set the follo
 Show flask which file to run:
 
 ```
-export FLASK_APP=flaskdemo.py
+export FLASK_APP=flask_relevance_search.py
 ```
 
 Enable development environment to activate interactive debugger and reloader:
