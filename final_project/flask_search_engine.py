@@ -95,7 +95,7 @@ def search():
         else:
             return render_template('indexempty.html', matches=[])
     
-    #Returns an empty template for empty searches"""
+    #Returns an empty template for empty searches
     else:
         return render_template('indexempty.html', matches=[])
 
