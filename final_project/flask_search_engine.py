@@ -61,7 +61,7 @@ def search():
     """If query exists (i.e. is not None)"""
     if query:
         
-        #If query is not found in the data, return a template for no results"""
+        #If query is not found in the data, return a template for no results
         if query not in terms and choice == "exact" or not wc_words and choice == "wildcard":
             return render_template('indexnoresults.html', matches=[], query=query)
 
@@ -69,15 +69,27 @@ def search():
         elif query in terms or wc_words:
             if choice == "exact":
                 print("doing an exact search for: ", query)
-                matches, graph_matches = relevance_search(query, query)            #searches for exact query
+                matches, graph_matches = relevance_search(query, query) #searches for exact query
 
+                generate_adj_plot(query, graph_matches)     #generates an adjective plot
+                extractor(query, graph_matches)             #extracts themes and generates a theme plot
+                #generate_verb_plot(query, graph_matches)
+                return render_template('index.html', matches=matches, query=query)
+                
             if choice == "wildcard":
                 new_query_string = " ".join(wc_words)   #creates a new query from the matching words
-                print("doing a wildcard search for: ", new_query_string)
+                print("doing a wildcard search for: ", query)
                 matches, graph_matches = relevance_search(query, new_query_string) #searches for wildcard query
 
+                generate_adj_plot("wildcard_"+query, graph_matches) #generates an adjective plot
+                extractor("wildcard_"+query, graph_matches)         #extracts themes and generates a theme plot
+                #generate_verb_plot(query, graph_matches)
+                return render_template('index.html', matches=matches, query="wildcard_"+query)
+
             if choice == "multiword":
+                
                 """NOT WORKING YET"""
+                
                 new_query_string = re.sub("_", " ", query)
                 print("new query: ", new_query_string)
                 mw_documents = re.sub(new_query_string, query, documents)
@@ -86,10 +98,11 @@ def search():
                 matches, graph_matches = relevance_search(query, new_query_string) #searches for multiword query
                 tf_matrix = tfv.fit_transform(documents).T.todense()
 
-            generate_adj_plot(query, graph_matches)
-            #generate_verb_plot(query, graph_matches)
+                generate_adj_plot("multiword_"+query, graph_matches)
+                extractor("multiword_"+query, graph_matches)
+                #generate_verb_plot(query, graph_matches)
+                return render_template('index.html', matches=matches, query="multiword_"+query)
             
-            return render_template('index.html', matches=matches, query=query)
 
         #Show empty template in the beginning
         else:
@@ -120,33 +133,25 @@ def relevance_search(orig_query, query):
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
             header = documents[i].split('mv_title')[1]              #Finds the header of an article for printing results.
-            body = documents[i].split('mv_title')[2]                #Finds the body of the texct
-            print(body)
-            snippets.append(body)
-            documents_dict[header] = body                           #We might not need this                                 
-            doc_html = nlp(body)
-            html = displacy.render(doc_html, style="ent", minify=True)
+            body = documents[i].split('mv_title')[2]                #Finds the body of the texct                          
+            doc_html = nlp(body)                                    #Creates an object for ner recognition
+            html = displacy.render(doc_html, style="ent", minify=True)  #Creates ner highlights
                                                                  
             line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
 
             matches.append(line)
             graph_matches.append({'name':header,'content':body,'pltpath':header+'_plt.png'})
+            
     except IndexError:
         line = "There was a problem with the search"
-        matches.append(line)
-
-    """Finds themes and creates a theme plot"""
-    f = open("document.txt", "w") #document from which extractor will create themes
-    f.write(str(snippets))
-    f.close()
-    keyphrases = extractor(orig_query) #retrieves the themes and weights from extractor
-    keyphrases_str = '\n'.join(str(v) for v in keyphrases)    
+        matches.append(line)    
                
     return matches, graph_matches        
 
 def generate_adj_plot(query, graph_matches):
-    """Generates a pieplot of the most frequent adjectives in the search results"""
-    #Creates a dictionary
+    """Generates a pieplot of the most frequent adjectives from the search results"""
+    
+    #Creates a dictionary and uses it to track adjective frequency
     dist_dict={}
     adjectives = []
     for match in graph_matches:
@@ -158,7 +163,7 @@ def generate_adj_plot(query, graph_matches):
             else:
                 dist_dict[adj] = 1
                 
-    #Finds most interesting adjectives
+    #Ranks the adjectives in a list according to frequency
     ranked_adjectives = []
     highest_adj_count = 0
     for adj in dist_dict.keys():
@@ -168,7 +173,7 @@ def generate_adj_plot(query, graph_matches):
         else:
             ranked_adjectives.append(adj)
 
-    #Creates pie charts for top10 or all
+    #Creates pie charts for top10 or all adjectives
     if len(ranked_adjectives) >= 10:
         top_10_adjectives = []
         remaining_adj_count = 0
@@ -229,14 +234,23 @@ def generate_theme_plot(query, keyphrases):
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.50)              # if you comment this line, your labels in the x-axis will be cutted
     
-
     #var_1 = list(keyphrases.values())
     #var_2 = list(keyphrases.keys())
     #plt.scatter(var_1,var_2,color='C2')
     plt.savefig(f'static/theme_{query}_plot.png')
     
 
-def extractor(query):
+def extractor(query, graph_matches):
+    """Finds themes and calls the theme plot generator"""
+    
+    snippets = []
+    for match in graph_matches:
+        snippets = match['content']
+        
+    f = open("document.txt", "w") #document from which extractor will create themes
+    f.write(str(snippets))
+    f.close()
+     
     """Extracts important words from the search results"""
     keyphrases = []
     extractor = pke.unsupervised.TopicRank()
@@ -245,6 +259,5 @@ def extractor(query):
     extractor.candidate_weighting()
     keyphrases = extractor.get_n_best(n=10)
     theme_dict = {k:v for k, v in keyphrases}
-    generate_theme_plot(query, theme_dict)
-    
-    return keyphrases
+    generate_theme_plot(query, theme_dict)  #calls for theme plot generator
+    #keyphrases_str = '\n'.join(str(v) for v in keyphrases)
