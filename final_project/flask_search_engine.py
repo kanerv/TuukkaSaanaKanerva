@@ -88,6 +88,7 @@ def search():
 
             generate_adj_plot(query, graph_matches)
             #generate_verb_plot(query, graph_matches)
+            generate_distribution_plot(query, graph_matches)
             
             return render_template('index.html', matches=matches, query=query)
 
@@ -112,7 +113,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Finds the number of matched documents for printing"""
-    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query:</h4><br>"
+    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query <i>" + orig_query + "</i>:</h4><br>"
     matches.append(line)
 
     """Finds information for printing results"""
@@ -123,8 +124,9 @@ def relevance_search(orig_query, query):
             body = documents[i].split('mv_title')[2]                #Finds the body of the texct
             print(body)
             snippets.append(body)
-            documents_dict[header] = body                           #We might not need this                                 
-            doc_html = nlp(body)
+            documents_dict[header] = body                           #We might not need this
+            global doc_html
+            doc_html = nlp(body) 
             html = displacy.render(doc_html, style="ent", minify=True)
                                                                  
             line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
@@ -142,7 +144,22 @@ def relevance_search(orig_query, query):
     keyphrases = extractor(orig_query) #retrieves the themes and weights from extractor
     keyphrases_str = '\n'.join(str(v) for v in keyphrases)    
                
-    return matches, graph_matches        
+    return matches, graph_matches
+
+
+def generate_distribution_plot(query, graph_matches):
+    """Generates a barplot of the distribution of the query word in the movie reviews"""
+    fig1 = plt.figure()
+    plt.title("Word distribution per review for query '" + query + "'")
+    dist_dict1={}
+    for match in graph_matches:
+        dist_dict1[match['name']] = len(match['content']) 
+    plt.bar(range(len(dist_dict1)), list(dist_dict1.values()), align='center', color="r")
+    plt.xticks(range(len(dist_dict1)), list(dist_dict1.keys()),rotation=80) # labels are rotated
+    # make room for the labels
+    plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
+    plt.savefig(f'static/distribution_{query}_plot.png')
+    
 
 def generate_adj_plot(query, graph_matches):
     """Generates a pieplot of the most frequent adjectives in the search results"""
@@ -224,7 +241,7 @@ def generate_adj_plot(query, graph_matches):
 def generate_theme_plot(query, keyphrases):
     """Creates a scatterplot by theme and weight"""
     fig = plt.figure()
-    plt.title("Your query has the following theme distribution")
+    plt.title("Theme distribution for query '" + query + "'")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.50)              # if you comment this line, your labels in the x-axis will be cutted
