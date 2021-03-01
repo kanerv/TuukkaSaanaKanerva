@@ -159,9 +159,9 @@ def generate_distribution_plot(query, graph_matches):
     for match in graph_matches:
         dist_dict1[match['name']] = len(match['content']) 
     plt.bar(range(len(dist_dict1)), list(dist_dict1.values()), align='center', color="r")
-    plt.xticks(range(len(dist_dict1)), list(dist_dict1.keys()),rotation=80) # labels are rotated
+    plt.xticks(range(len(dist_dict1)), list(dist_dict1.keys()),rotation=60) # labels are rotated
     # make room for the labels
-    plt.gcf().subplots_adjust(bottom=0.30) # if you comment this line, your labels in the x-axis will be cutted
+    plt.gcf().subplots_adjust(bottom=0.50) # if you comment this line, your labels in the x-axis will be cutted
     plt.savefig(f'static/distribution_{query}_plot.png')
 
 def generate_adj_plot(query, graph_matches):
