@@ -1,13 +1,13 @@
 ### Rotten Linguist search engine for movie reviews
 
-This is a final project for the course _KIK-LG211 Building NLP Applications_.
+This is a final project for the course _KIK-LG211 Building NLP Applications_ at the University of Helsinki.
 
-Rotten Linguist search engine searches for film reviews from rottentomatoes.com top 500 movies from 2016-2020 (https://www.rottentomatoes.com/).
+Rotten Linguist's search engine searches for film reviews from rottentomatoes.com top 500 movies from 2016-2020 (https://www.rottentomatoes.com/).
 The relevance search engine provides options for an exact match and simple wildcard search.
-The results are presented in a user interface which is accessed through browser. The program prints snippets with NER (named entity) highlighting and generates plots for most used adjectives, themes, and x?
+The results are presented in a user interface which is accessed through browser. The program prints snippets with NER (named entity recognition) highlighting and generates plots for most used adjectives, themes, and x?
 
 
-The program uses Flask, so before runnign the program, you need to set the following environment variables:
+The program uses Flask, so before running the program, you need to set the following environment variables:
 
 Show flask which file to run:
 
