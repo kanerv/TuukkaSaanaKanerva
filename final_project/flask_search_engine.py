@@ -157,10 +157,13 @@ def generate_adj_plot(query, graph_matches):
         doc = nlp(match['content'])
         adjectives = [token.lemma_ for token in doc if token.pos_ == "ADJ"]
         for adj in adjectives:
-            if adj in dist_dict.keys():
-                dist_dict[adj] = dist_dict[adj] + 1
+            if len(adj)>1:      #skipping punctuation marks that spacy incorrectly classifies as adjectives
+                if adj in dist_dict.keys():
+                    dist_dict[adj] = dist_dict[adj] + 1
+                else:
+                    dist_dict[adj] = 1
             else:
-                dist_dict[adj] = 1
+                continue
                 
     #Ranks the adjectives in a list according to frequency
     ranked_adjectives = []
