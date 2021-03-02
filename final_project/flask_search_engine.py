@@ -71,7 +71,6 @@ def search():
                 print("doing an exact search for: ", query)
                 matches, graph_matches = relevance_search(query, query) #searches for exact query
 
-                generate_distribution_plot(query, graph_matches) #generates distribution plot
                 generate_adj_plot(query, graph_matches)     #generates an adjective plot
                 extractor(query, graph_matches)             #extracts themes and generates a theme plot
                 generate_verb_plot(query, graph_matches)    #generates a verb plot
@@ -83,7 +82,6 @@ def search():
                 print("doing a wildcard search for: ", query)
                 matches, graph_matches = relevance_search(query, new_query_string) #searches for wildcard query
 
-                generate_distribution_plot("wildcard_"+query, graph_matches) #generates distribution plot
                 generate_adj_plot("wildcard_"+query, graph_matches)     #generates an adjective plot
                 extractor("wildcard_"+query, graph_matches)             #extracts themes and generates a theme plot
                 generate_verb_plot("wildcard_"+query, graph_matches)    #generates a verb plot
@@ -134,18 +132,6 @@ def relevance_search(orig_query, query):
                
     return matches, graph_matches
 
-def generate_distribution_plot(query, graph_matches):
-    """Generates a barplot of the distribution of the query word in the movie reviews"""
-    fig1 = plt.figure()
-    plt.title("Distribution of your query per review")
-    dist_dict1={}
-    for match in graph_matches:
-        dist_dict1[match['name']] = len(match['content']) 
-    plt.bar(range(len(dist_dict1)), list(dist_dict1.values()), align='center', color="r")
-    plt.xticks(range(len(dist_dict1)), list(dist_dict1.keys()),rotation=60) # labels are rotated
-    # make room for the labels
-    plt.gcf().subplots_adjust(bottom=0.50) # if you comment this line, your labels in the x-axis will be cutted
-    plt.savefig(f'static/distribution_{query}_plot.png')
 
 def generate_adj_plot(query, graph_matches):
     """Generates a pieplot of the most frequent adjectives from the search results"""
