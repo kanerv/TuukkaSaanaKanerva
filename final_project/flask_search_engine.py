@@ -109,7 +109,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Finds the number of matched documents for printing"""
-    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query <i>" + query +"</i>:</h4><br>"
+    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query <i>" + orig_query +"</i>:</h4><br>"
     matches.append(line)
 
     """Finds information for printing results"""
