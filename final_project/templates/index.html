@@ -2,15 +2,21 @@
     <head>
         <meta charset="utf-8">
         <title>Rotten Linguist's film review search</title>
+	<style>
+	table.center {
+  	margin-left: auto; 
+  	margin-right: auto;
+	}
+	</style>
     </head>
     <body style="background-color:rgba(225, 99, 67, 0.8);margin-left:150px; margin-right:150px;">
         <h1 style="border:2px solid rgba(225, 101, 71, 1); text-align:center; font-family:'Courier New';">Rotten Linguist's Film Review Search</h1>
 	  <p style="text-align:center; font-family:'Courier New'">This search engine searches film reviews from <a href="https://www.rottentomatoes.com">rottentomatoes.com</a> top 500 movies from 2016-2020<br>
 
-<!--Tomato emoji-->
-<h1 style= text-align:center>&#127813;</h1>
+	<!--Tomato emoji-->
+	<h1 style= text-align:center>&#127813;</h1>
        
-	   <!--Reload the page with variable "query" in the URL-->
+	<!--Reload the page with variable "query" in the URL-->
         <form style="text-align:center; font-family:'Courier New'">
             <input type="radio" id="exact" name="choice" value="exact" checked>
             <label for="exact">Exact match (e.g. movie)</label><br>
@@ -20,35 +26,30 @@
             <input type="submit" value="Search">
         </form>
       
-	<table style="float:top;"> 
+	<table style="float:top;"class="center;"> 
 
-		<!--insert the query plot-->
+		<!--insert the query plots-->
 		<tr>
-
-			<td><font face="Courier New" size='2' color="black"><img src="./static/adj_{{ query }}_plot_pie.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:right"></td>
+		<td><img src="./static/adj_{{ query }}_plot_pie.png" style="width: 400px; height 100%;marigin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:center"></td>
                 
-                		<td><font face="Courier New" size='2' color="black"></font><img src="./static/theme_{{ query }}_plot.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:right""></td>
+                <td><img src="./static/theme_{{ query }}_plot.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:center"></td>
 
-	<td><font face="Courier New" size='2' color="black"><img src="./static/verb_{{ query }}_plot_pie.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:right"></td>
-</table>
-		<tr>
-
-		<tr>
-
-			<td><font face="Courier New" size='2' color="black"><img src="./static/pos_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:right"></td>
-
-			
+		<td><img src="./static/verb_{{ query }}_plot_pie.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:center"></td>
+		</tr>
 
 		<tr>
+		<td><font face="Courier New" size='2' color="black"></font><img src="./static/pos_{{ query }}_plot_bar.png" style="width: 400px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:center"></td>
+		</tr>
+	</table>
 
    <!--Go through each item in the "matches" variable sent from
                 search() function in the Flask app-->
-            <br>
+        <br>
             {% autoescape off %}
             {% for item in matches | unique %}
 		 {{ item }}
-<p style="border:2px solid rgba(225, 101, 71, 1);">
-                </p><br>
+	<p style="border:2px solid rgba(225, 101, 71, 1);"> </p>
+	<br>
             <!--End for loop-->
             {% endfor %}
             {% endautoescape %}
