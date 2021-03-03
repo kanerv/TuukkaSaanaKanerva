@@ -109,7 +109,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Finds the number of matched documents for printing"""
-    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " documents matching your query <i>" + orig_query +"</i>:</h4><br>"
+    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " movies matching your query <i>" + orig_query +"</i>:</h4><br>"
     matches.append(line)
 
     """Finds information for printing results"""
@@ -252,7 +252,7 @@ def generate_verb_plot(query, graph_matches):
 def generate_theme_plot(query, keyphrases):
     """Creates a scatterplot by theme and weight"""
     fig = plt.figure()
-    plt.title("Theme distribution of your query")
+    plt.title("Theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.50)              # if you comment this line, your labels in the x-axis will be cutted
@@ -304,7 +304,7 @@ def generate_pos_plot(query, graph_matches):
     bar_fig = plt.figure()
     plt.title("Part-of-speech tag distribution")
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='r')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=60)   # labels are rotated
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
     plt.savefig(f'static/pos_{query}_plot_bar.png')
 
