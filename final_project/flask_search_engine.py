@@ -124,7 +124,7 @@ def relevance_search(orig_query, query):
             body = documents[i].split('mv_title')[2]                #Find the body of the texct                          
             doc_html = nlp(body)                                    #Create an object for ner recognition
             html = displacy.render(doc_html, style="ent", minify=True)  #Create ner highlights                                                           
-            line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the document named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
+            line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the movie named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
             matches.append(line)
             graph_matches.append({'name':header,'content':body,'pltpath':header+'_plt.png'})
             
