@@ -1,6 +1,6 @@
 ### Rotten Linguist search engine for movie reviews
 
-This is a final project for the course _KIK-LG211 Building NLP Applications_ at the University of Helsinki, Spring 2021.
+This is a final project for the course _KIK-LG211 Building NLP Applications_ at the University of Helsinki, spring 2021.
 
 Rotten Linguist's search engine searches for film reviews from rottentomatoes.com top 500 movies from 2016-2020 (https://www.rottentomatoes.com/).
 The relevance search engine provides options for an exact match and simple wildcard search.
