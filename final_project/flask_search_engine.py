@@ -304,7 +304,7 @@ def generate_pos_plot(query, graph_matches):
     bar_fig = plt.figure()
     plt.title("Part-of-speech tag distribution")
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='r')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=60)   # labels are rotated
     plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
     plt.savefig(f'static/pos_{query}_plot_bar.png')
 
