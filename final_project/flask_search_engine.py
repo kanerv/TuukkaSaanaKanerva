@@ -3,7 +3,6 @@ import re, fileinput, mmap, nltk
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import matplotlib as mlp
-from termcolor import colored
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from nltk.stem.snowball import SnowballStemmer
