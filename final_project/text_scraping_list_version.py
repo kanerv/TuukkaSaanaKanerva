@@ -5,7 +5,6 @@
 
 import nltk, requests, datetime, webbrowser
 from bs4 import BeautifulSoup
-from termcolor import colored
 from urllib import request
 import json
 import re
@@ -57,5 +56,13 @@ def scraper(url):
         f.close()
 
 def main():
+        scraper("https://www.rottentomatoes.com/top/bestofrt/?year=2016")
+        time.sleep(22)
+        scraper("https://www.rottentomatoes.com/top/bestofrt/?year=2017")
+        time.sleep(25)
+        scraper("https://www.rottentomatoes.com/top/bestofrt/?year=2018")
+        time.sleep(32)
+        scraper("https://www.rottentomatoes.com/top/bestofrt/?year=2019")
+        time.sleep(20)
         scraper("https://www.rottentomatoes.com/top/bestofrt/?year=2020")      
 main()
