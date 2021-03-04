@@ -113,7 +113,7 @@ def relevance_search(orig_query, query):
     sorted([ (score, i) for i, score in enumerate(np.array(scores)[0]) if score > 0], reverse=True)
 
     """Find the number of matched documents for printing and save the line in matches"""
-    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " movies matching your query <i>" + orig_query +"</i>:</h4><br>"
+    line = "<h4 style=font-family:'Courier New';>There are " + str(len(ranked_scores_and_doc_ids)) + " films matching your query <i>" + orig_query +"</i>:</h4><br>"
     matches.append(line)
 
     """Find information for printing results and generating plots"""
@@ -124,7 +124,7 @@ def relevance_search(orig_query, query):
             body = documents[i].split('mv_title')[2]                #Find the body of the texct                          
             doc_html = nlp(body)                                    #Create an object for ner recognition
             html = displacy.render(doc_html, style="ent", minify=True)  #Create ner highlights                                                           
-            line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the movie named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
+            line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the films named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
             matches.append(line)
             graph_matches.append({'name':header,'content':body,'pltpath':header+'_plt.png'})
             
