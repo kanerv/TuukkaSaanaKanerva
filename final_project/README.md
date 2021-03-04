@@ -27,5 +27,10 @@ Set the port in which to run the application, e.g.:
 ```
 export FLASK_RUN_PORT=8000
 ```
+Run FLASK
+
+```
+flask run
+```
 
 Go to `localhost:8000/search` in your browser to see the website.
