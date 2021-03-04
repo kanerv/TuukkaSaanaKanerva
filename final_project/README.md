@@ -9,6 +9,7 @@ The data from RT will only be used for educational purposes as example data for 
 
 The program uses the following python libraries which need to be installed in order for the program to work:
 flask, nltk re, fileinput, mmap, tdqm, matplotlib, matplotlib.pyplot, sklearn.feature_extraction.text, numpynltk.stem.snowball, os, ast, pke, spacy.
+
 The program uses Flask, so before running the program, you need to set the following environment variables:
 
 Show flask which file to run:
