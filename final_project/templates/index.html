@@ -26,8 +26,8 @@
             <input type="submit" value="Search">
         </form>
 	<hr>
-	<table style="float:top; width:80%;"class="center";> 
 
+	<table style="float:top; width:80%;"class="center";> 
 		<!--insert the query plots-->
 		<tr>
                 <td><img src="./static/theme_{{ query }}_plot.png" style="width: 500px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:center"></td>
@@ -40,7 +40,6 @@
 
 		<td><img src="./static/verb_{{ query }}_plot_pie.png" style="width: 500px; height 100%;margin-left=30px; border: 5px solid rgba(225, 101, 71, 1);align:center"></td>
 		</tr>
-
 	</table>
 
    <!--Go through each item in the "matches" variable sent from
@@ -55,6 +54,6 @@
             {% endfor %}
             {% endautoescape %}
     
-</body>
+	</body>
 </html>
 
