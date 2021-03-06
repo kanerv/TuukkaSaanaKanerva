@@ -245,7 +245,8 @@ def generate_adj_plot(query, graph_matches):
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
-
+    print("adjs: ", adjectives)
+    print("dict: ", dist_dict)
     plt.savefig(f'static/adj_{query}_plot_pie.png')
     
   
@@ -297,5 +298,6 @@ def generate_verb_plot(query, graph_matches):
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent verbs")
-        
+    print("verbs: ", verbs)
+    print("dict: ", dist_dict)
     plt.savefig(f'static/verb_{query}_plot_pie.png')
