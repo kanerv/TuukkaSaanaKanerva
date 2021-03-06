@@ -247,7 +247,7 @@ def generate_adj_plot(query, graph_matches):
         ax.set_title("Most frequent adjectives")
 
     print("-----ADJECTIVES:-----")
-    print("all adjs: ", dist_dict.keys())
+    print("number of all adjs: ", len(dist_dict.keys()))
     print("adjs in order of frequency: ", ranked_adjectives)
     print("labels : ", labels)
     print("dict: ", dist_dict)
@@ -305,7 +305,7 @@ def generate_verb_plot(query, graph_matches):
         ax.set_title("Most frequent verbs")
         
     print("-----VERBS:-----")
-    print("all verbs: ", dist_dict.keys())
+    print("number of all verbs: ", len(dist_dict.keys()))
     print("verbs in order of frequency: ", ranked_verbs)
     print("labels : ", labels)
     print("dict: ", dist_dict)
