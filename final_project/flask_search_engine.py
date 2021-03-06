@@ -222,12 +222,12 @@ def generate_adj_plot(query, graph_matches):
             ranked_adjectives.append(adj)
 
     #Create a pie chart for top10 or all adjectives
-    if len(ranked_adjectives) >= 10:
+    if len(ranked_adjectives) > 10:
         top_10_adjectives = []
         remaining_adj_count = 0
         top_10_adjectives = ranked_adjectives[0:9]
-        for adj in ranked_adjectives[10:]:
-            remaining_adj_count =+ dist_dict[adj]
+        for adj in ranked_adjectives[9:]:
+            remaining_adj_count += dist_dict[adj]
         dist_dict['Other'] = remaining_adj_count
         top_10_adjectives.append('Other')
         #Pie chart for top 10 adjectives
@@ -245,8 +245,13 @@ def generate_adj_plot(query, graph_matches):
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
-    print("adjs: ", adjectives)
+
+    print("-----ADJECTIVES:-----")
+    print("all adjs: ", dist_dict.keys())
+    print("adjs in order of frequency: ", ranked_adjectives)
+    print("labels : ", labels)
     print("dict: ", dist_dict)
+    print("------ \n")
     plt.savefig(f'static/adj_{query}_plot_pie.png')
     
   
@@ -275,12 +280,12 @@ def generate_verb_plot(query, graph_matches):
             ranked_verbs.append(verb)
 
     #Create pie charts for top10 or all verbs
-    if len(ranked_verbs) >= 10:
+    if len(ranked_verbs) > 10:
         top_10_verbs = []
         remaining_verb_count = 0
         top_10_verbs = ranked_verbs[0:9]
-        for verb in ranked_verbs[10:]:
-            remaining_verb_count =+ dist_dict[verb]
+        for verb in ranked_verbs[9:]:
+            remaining_verb_count += dist_dict[verb]
         dist_dict['Other'] = remaining_verb_count
         top_10_verbs.append('Other')
         #Pie chart for top 10 adjectives
@@ -298,6 +303,12 @@ def generate_verb_plot(query, graph_matches):
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent verbs")
-    print("verbs: ", verbs)
+        
+    print("-----VERBS:-----")
+    print("all verbs: ", dist_dict.keys())
+    print("verbs in order of frequency: ", ranked_verbs)
+    print("labels : ", labels)
     print("dict: ", dist_dict)
+    print("----- \n")
+    
     plt.savefig(f'static/verb_{query}_plot_pie.png')
