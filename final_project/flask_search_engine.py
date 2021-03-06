@@ -15,10 +15,10 @@ from spacy import displacy
 
 mlp.use('Agg')
 
-"""Initializes a Flask instance"""
+"""Initialize a Flask instance"""
 app = Flask(__name__)
 
-"""Retrieves data and stores it in a list called documents"""
+"""Retrieve data and store it in a list called documents"""
 documents = []
 file = open("scraped_data.txt", "r") #file where data is stored
 contents = file.read()
@@ -40,7 +40,7 @@ nlp = spacy.load('en_core_web_sm') #loads the small english module
 @app.route('/search')
 def search():
     
-    #delete previous plots and rewrites variables
+    #delete previous plots and rewrite variables
     os.system('rm -f static/*.png')
     global matches, graph_matches
     matches = []
@@ -56,9 +56,9 @@ def search():
     choice = request.args.get('choice')
 
     #Define variables for wildcard search
-    wc_query = query+".*"                                       #add the wildcard notation and finds matching words from the data
+    wc_query = query+".*"                                               #add the wildcard notation and find matching words from the data
     global wc_words
-    wc_words = [w for w in terms if re.fullmatch(wc_query, w)]  #this line is copied from the group "wewhoshallnotbenamed"
+    wc_words = [w for w in terms if re.fullmatch(wc_query, w)]          #this line is copied from the group "wewhoshallnotbenamed"
 
     """If query exists (i.e. is not None)"""
     if query:
@@ -74,16 +74,16 @@ def search():
                 print("doing an exact search for: ", query)
                 matches, graph_matches = relevance_search(query, query) #search for exact query
 
-                extractor(query, graph_matches)             #extract themes and generate a theme plot
-                generate_pos_plot(query, graph_matches)     #generate a PoS plot
-                generate_adj_plot(query, graph_matches)     #generate an adjective plot
-                generate_verb_plot(query, graph_matches)    #generate a verb plot
-                return render_template('index.html', matches=matches, query=query)  #Render index.html with matches variable and choice-specific query
+                extractor(query, graph_matches)                         #extract themes and generate a theme plot
+                generate_pos_plot(query, graph_matches)                 #generate a PoS plot
+                generate_adj_plot(query, graph_matches)                 #generate an adjective plot
+                generate_verb_plot(query, graph_matches)                #generate a verb plot
+                return render_template('index.html', matches=matches, query=query)              #Render index.html with matches variable and choice-specific query
                 
             if choice == "wildcard":
-                new_query_string = " ".join(wc_words)   #create new query from the matching words
+                new_query_string = " ".join(wc_words)                   #create new query from the matching words
                 print("doing a wildcard search for: ", query)
-                matches, graph_matches = relevance_search(query, new_query_string) #search for wildcard query
+                matches, graph_matches = relevance_search(query, new_query_string)  #search for wildcard query
 
                 extractor("wildcard_"+query, graph_matches)             #extract themes and generate a theme plot
                 generate_pos_plot("wildcard_"+query, graph_matches)     #generate a PoS plot
@@ -119,9 +119,9 @@ def relevance_search(orig_query, query):
     try:
         for score, i in ranked_scores_and_doc_ids:
             score = "{:.4f}".format(score)
-            header = documents[i].split('mv_title')[1]              #Find the header of each matching article.
-            body = documents[i].split('mv_title')[2]                #Find the body of the texct                          
-            doc_html = nlp(body)                                    #Create an object for ner recognition
+            header = documents[i].split('mv_title')[1]                  #Find the header of each matching article.
+            body = documents[i].split('mv_title')[2]                    #Find the body of the texct                          
+            doc_html = nlp(body)                                        #Create an object for ner recognition
             html = displacy.render(doc_html, style="ent", minify=True)  #Create ner highlights                                                           
             line = "<h4 style=font-family:'Courier New';>&#127813; The score of <i> " + orig_query + "</i> is "+ score + " in the film named: <em>" + header + "</em></b></h4>\n\n" + "<h4 style=font-family:'Courier New';>Here is the review:</h4>" + html
             matches.append(line)
@@ -140,7 +140,7 @@ def generate_theme_plot(query, keyphrases):
     plt.title("Theme distribution")
     plt.bar(range(len(keyphrases.keys())), list(keyphrases.values()), align='center', color='r')
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   #rotate labels
-    plt.gcf().subplots_adjust(bottom=0.50)              #make room for labels
+    plt.gcf().subplots_adjust(bottom=0.50)                              #make room for labels
     
     #var_1 = list(keyphrases.values())
     #var_2 = list(keyphrases.keys())
@@ -238,7 +238,7 @@ def generate_adj_plot(query, graph_matches):
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
     else:
-        #Pie chart for all
+        #Pie chart for all if there are less than 10 adjectives in the results
         pie_fig = plt.figure()
         labels = dist_dict.keys()
         sizes = dist_dict.values()
@@ -291,7 +291,7 @@ def generate_verb_plot(query, graph_matches):
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent verbs")
     else:
-        #Pie chart for all
+        #Pie chart for all if there are less than 10 verbs in the results
         pie_fig = plt.figure()
         labels = dist_dict.keys()
         sizes = dist_dict.values()

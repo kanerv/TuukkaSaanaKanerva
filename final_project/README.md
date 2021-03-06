@@ -7,6 +7,8 @@ The relevance search engine provides options for an exact match and simple wildc
 The results are presented in a user interface which is accessed through browser. The program prints snippets with NER (named entity recognition) highlighting and generates plots for most used adjectives and verbs, as well as for the frequency distribution of themes and PoS (Part-of-speech) tags.
 The data from RT will only be used for educational purposes as example data for a search engine. All the data will be removed at the end of the KIK-LG211 course.'
 
+The program uses the following python libraries which need to be installed in order for the program to work:
+flask, nltk, re, fileinput, mmap, tdqm, matplotlib, matplotlib.pyplot, sklearn.feature_extraction.text, numpynltk.stem.snowball, os, ast, pke, spacy.
 
 The program uses Flask, so before running the program, you need to set the following environment variables:
 
