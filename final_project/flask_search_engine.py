@@ -222,29 +222,25 @@ def generate_adj_plot(query, graph_matches):
             ranked_adjectives.append(adj)
 
     #Create a pie chart for top10 or all adjectives
-    if len(ranked_adjectives) > 10:
-        top_10_adjectives = []
-        remaining_adj_count = 0
-        top_10_adjectives = ranked_adjectives[0:9]
-        for adj in ranked_adjectives[9:]:
-            remaining_adj_count += dist_dict[adj]
-        dist_dict['Other'] = remaining_adj_count
-        top_10_adjectives.append('Other')
-        #Pie chart for top 10 adjectives
-        pie_fig = plt.figure()
-        labels = top_10_adjectives
-        sizes = [dist_dict[adj] for adj in top_10_adjectives]
-        pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
-        ax.set_title("Most frequent adjectives")
-    else:
-        #Pie chart for all if there are less than 10 adjectives in the results
+    if len(ranked_adjectives) <= 10:
+        #Pie chart for all if there are 10 or less adjectives in the results
         pie_fig = plt.figure()
         labels = dist_dict.keys()
         sizes = dist_dict.values()
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
+    if len(ranked_adjectives) > 10:
+        top_10_adjectives = []
+        top_10_adjectives = ranked_adjectives[0:10]
+        #Pie chart for top 10 adjectives
+        pie_fig = plt.figure()
+        labels = top_10_adjectives
+        sizes = [dist_dict[adj] for adj in top_10_adjectives]
+        pie_fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        adj_total = str(len(dist_dict))
+        ax.set_title("10/" + adj_total + " most frequent adjectives")
 
     print("-----ADJECTIVES:-----")
     print("number of all adjs: ", len(dist_dict.keys()))
@@ -279,7 +275,15 @@ def generate_verb_plot(query, graph_matches):
         else:
             ranked_verbs.append(verb)
 
-    #Create pie charts for top10 or all verbs
+    #Create pie charts for top10 or all verbs        
+    if len(ranked_verbs) <= 10:
+        #Pie chart for all if there are 10 or less verbs in the results
+        pie_fig = plt.figure()
+        labels = dist_dict.keys()
+        sizes = dist_dict.values()
+        pie_fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.set_title("Most frequent verbs")
     if len(ranked_verbs) > 10:
         top_10_verbs = []
         remaining_verb_count = 0
@@ -288,26 +292,29 @@ def generate_verb_plot(query, graph_matches):
             remaining_verb_count += dist_dict[verb]
         dist_dict['Other'] = remaining_verb_count
         top_10_verbs.append('Other')
-        #Pie chart for top 10 adjectives
-        pie_fig = plt.figure()
-        labels = top_10_verbs
-        sizes = [dist_dict[verb] for verb in top_10_verbs]
-        pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
-        ax.set_title("Most frequent verbs")
-    else:
-        #Pie chart for all if there are less than 10 verbs in the results
-        pie_fig = plt.figure()
-        labels = dist_dict.keys()
-        sizes = dist_dict.values()
-        pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
-        ax.set_title("Most frequent verbs")
+        if len(ranked_verbs) < 30:
+            #Pie chart for top 10 adjectives
+            pie_fig = plt.figure()
+            labels = top_10_verbs
+            sizes = [dist_dict[verb] for verb in top_10_verbs]
+            pie_fig, ax = plt.subplots()
+            ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+            ax.set_title("Most frequent verbs")
+        else:
+            #Create a bar plot when there are too many tags
+            top_10_dict = {}
+            for v in top_10_verbs:
+                top_10_dict[v] = dist_dict[v]
+            bar_fig = plt.figure()
+            plt.title("Most frequent verbs")
+            plt.bar(range(len(top_10_dict)), list(v for v in top_10_dict.values()), align='center', color='r')
+            plt.xticks(range(len(top_10_dict)), list(top_10_dict), rotation=80)   # labels are rotated
+            plt.gcf().subplots_adjust(bottom=0.30)
         
     print("-----VERBS:-----")
     print("number of all verbs: ", len(dist_dict.keys()))
     print("verbs in order of frequency: ", ranked_verbs)
-    print("labels : ", labels)
+    #print("labels : ", labels)
     print("dict: ", dist_dict)
     print("----- \n")
     
