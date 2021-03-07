@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request
-import re, fileinput, mmap, nltk
-from tqdm import tqdm
+import re, nltk
+from sklearn.feature_extraction.text import TfidfVectorizer
 import matplotlib.pyplot as plt
 import matplotlib as mlp
-from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
-from nltk.stem.snowball import SnowballStemmer
 import os
 import ast
 import pke
@@ -71,7 +69,6 @@ def search():
         elif query in terms or wc_words:
             
             if choice == "exact":
-                print("doing an exact search for: ", query)
                 matches, graph_matches = relevance_search(query, query) #search for exact query
 
                 extractor(query, graph_matches)                         #extract themes and generate a theme plot
@@ -82,7 +79,6 @@ def search():
                 
             if choice == "wildcard":
                 new_query_string = " ".join(wc_words)                   #create new query from the matching words
-                print("doing a wildcard search for: ", query)
                 matches, graph_matches = relevance_search(query, new_query_string)  #search for wildcard query
 
                 extractor("wildcard_"+query, graph_matches)             #extract themes and generate a theme plot
@@ -142,9 +138,6 @@ def generate_theme_plot(query, keyphrases):
     plt.xticks(range(len(keyphrases)), list(keyphrases.keys()), rotation=60)   #rotate labels
     plt.gcf().subplots_adjust(bottom=0.50)                              #make room for labels
     
-    #var_1 = list(keyphrases.values())
-    #var_2 = list(keyphrases.keys())
-    #plt.scatter(var_1,var_2,color='C2')
     plt.savefig(f'static/theme_{query}_plot.png')
     
 
@@ -168,7 +161,6 @@ def extractor(query, graph_matches):
     keyphrases = extractor.get_n_best(n=10)
     theme_dict = {k:v for k, v in keyphrases}
     generate_theme_plot(query, theme_dict)  #call theme plot generator
-    #keyphrases_str = '\n'.join(str(v) for v in keyphrases)
 
 def generate_pos_plot(query, graph_matches):
     """Generate a bar plot by PoS tagged content"""
@@ -211,18 +203,11 @@ def generate_adj_plot(query, graph_matches):
             else:
                 continue
                 
-    #Rank the adjectives in a list according to frequency
-    ranked_adjectives = []
-    highest_adj_count = 0
-    for adj in dist_dict.keys():
-        if dist_dict[adj] >= highest_adj_count:
-            ranked_adjectives.insert(0, adj)
-            highest_adj_count = dist_dict[adj]
-        else:
-            ranked_adjectives.append(adj)
+    #Rank the adjectives according to frequency
+    dist_dict = dict(reversed(sorted(dist_dict.items(), key=lambda item: item[1])))
 
-    #Create a pie chart for top10 or all adjectives
-    if len(ranked_adjectives) <= 10:
+    #Create a pie chart for all or top10 adjectives
+    if len(dist_dict) <= 10:
         #Pie chart for all if there are 10 or less adjectives in the results
         pie_fig = plt.figure()
         labels = dist_dict.keys()
@@ -230,24 +215,19 @@ def generate_adj_plot(query, graph_matches):
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
-    if len(ranked_adjectives) > 10:
+    if len(dist_dict) > 10:
         top_10_adjectives = []
-        top_10_adjectives = ranked_adjectives[0:10]
+        top_10_adjectives = list(dist_dict.keys())
+        top_10_adjectives = top_10_adjectives[0:10]        
         #Pie chart for top 10 adjectives
         pie_fig = plt.figure()
         labels = top_10_adjectives
         sizes = [dist_dict[adj] for adj in top_10_adjectives]
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
-        adj_total = str(len(dist_dict))
+        adj_total = str(len(dist_dict))     #note: this won't match the value in PoS plot, since the data is lemmatised here, but not in PoS plot
         ax.set_title("10/" + adj_total + " most frequent adjectives")
-
-    print("-----ADJECTIVES:-----")
-    print("number of all adjs: ", len(dist_dict.keys()))
-    print("adjs in order of frequency: ", ranked_adjectives)
-    print("labels : ", labels)
-    print("dict: ", dist_dict)
-    print("------ \n")
+    
     plt.savefig(f'static/adj_{query}_plot_pie.png')
     
   
@@ -265,18 +245,11 @@ def generate_verb_plot(query, graph_matches):
             else:
                 dist_dict[verb] = 1
 
-    #Rank the verbs in a list according to frequency
-    ranked_verbs = []
-    highest_verb_count = 0
-    for verb in dist_dict.keys():
-        if dist_dict[verb] >= highest_verb_count:
-            ranked_verbs.insert(0, verb)
-            highest_verb_count = dist_dict[verb]
-        else:
-            ranked_verbs.append(verb)
+    #Rank the verbs according to frequency
+    dist_dict = dict(reversed(sorted(dist_dict.items(), key=lambda item: item[1])))
 
-    #Create pie charts for top10 or all verbs        
-    if len(ranked_verbs) <= 10:
+    #Create a pie chart for all or top10 verbs
+    if len(dist_dict) <= 10:
         #Pie chart for all if there are 10 or less verbs in the results
         pie_fig = plt.figure()
         labels = dist_dict.keys()
@@ -284,38 +257,17 @@ def generate_verb_plot(query, graph_matches):
         pie_fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
         ax.set_title("Most frequent verbs")
-    if len(ranked_verbs) > 10:
+    if len(dist_dict) > 10:
         top_10_verbs = []
-        remaining_verb_count = 0
-        top_10_verbs = ranked_verbs[0:9]
-        for verb in ranked_verbs[9:]:
-            remaining_verb_count += dist_dict[verb]
-        dist_dict['Other'] = remaining_verb_count
-        top_10_verbs.append('Other')
-        if len(ranked_verbs) < 30:
-            #Pie chart for top 10 adjectives
-            pie_fig = plt.figure()
-            labels = top_10_verbs
-            sizes = [dist_dict[verb] for verb in top_10_verbs]
-            pie_fig, ax = plt.subplots()
-            ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
-            ax.set_title("Most frequent verbs")
-        else:
-            #Create a bar plot when there are too many tags
-            top_10_dict = {}
-            for v in top_10_verbs:
-                top_10_dict[v] = dist_dict[v]
-            bar_fig = plt.figure()
-            plt.title("Most frequent verbs")
-            plt.bar(range(len(top_10_dict)), list(v for v in top_10_dict.values()), align='center', color='r')
-            plt.xticks(range(len(top_10_dict)), list(top_10_dict), rotation=80)   # labels are rotated
-            plt.gcf().subplots_adjust(bottom=0.30)
-        
-    print("-----VERBS:-----")
-    print("number of all verbs: ", len(dist_dict.keys()))
-    print("verbs in order of frequency: ", ranked_verbs)
-    #print("labels : ", labels)
-    print("dict: ", dist_dict)
-    print("----- \n")
+        top_10_verbs = list(dist_dict.keys())
+        top_10_verbs = top_10_verbs[0:10]        
+        #Pie chart for top 10 verbs
+        pie_fig = plt.figure()
+        labels = top_10_verbs
+        sizes = [dist_dict[verb] for verb in top_10_verbs]
+        pie_fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        verb_total = str(len(dist_dict))        #note: this won't match the value in PoS plot, since the data is lemmatised here, but not in PoS plot
+        ax.set_title("10/" + verb_total + " most frequent verbs")
     
     plt.savefig(f'static/verb_{query}_plot_pie.png')
