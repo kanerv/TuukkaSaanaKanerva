@@ -181,13 +181,14 @@ def generate_pos_plot(query, graph_matches):
     bar_fig = plt.figure()
     plt.title("Part-of-speech tag distribution")
     plt.bar(range(len(dist_dict)), list(dist_dict.values()), align='center', color='r')
-    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   # labels are rotated
-    plt.gcf().subplots_adjust(bottom=0.30)                                  # if you comment this line, your labels in the x-axis will be cutted
+    plt.xticks(range(len(dist_dict)), list(dist_dict.keys()),rotation=80)   #rotate labels
+    plt.gcf().subplots_adjust(bottom=0.30)                                  #make room for labels
     plt.savefig(f'static/pos_{query}_plot_bar.png')
 
 
 def generate_adj_plot(query, graph_matches):
-    """Generate a pieplot of the most frequent adjectives from the search results"""   
+    """Generate a pieplot of the most frequent adjectives from the search results"""
+    
     #Create a dictionary to track adjective frequency
     dist_dict={}
     adjectives = []
@@ -213,7 +214,7 @@ def generate_adj_plot(query, graph_matches):
         labels = dist_dict.keys()
         sizes = dist_dict.values()
         pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.pie(sizes, labels=labels, autopct=lambda p:f'{p*sum(sizes)/100 :.0f}', shadow=False, startangle=90)
         ax.set_title("Most frequent adjectives")
     if len(dist_dict) > 10:
         top_10_adjectives = []
@@ -224,15 +225,15 @@ def generate_adj_plot(query, graph_matches):
         labels = top_10_adjectives
         sizes = [dist_dict[adj] for adj in top_10_adjectives]
         pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.pie(sizes, labels=labels, autopct=lambda p:f'{p*sum(sizes)/100 :.0f}', shadow=False, startangle=90)
         adj_total = str(len(dist_dict))     #note: this won't match the value in PoS plot, since the data is lemmatised here, but not in PoS plot
         ax.set_title("10/" + adj_total + " most frequent adjectives")
     
-    plt.savefig(f'static/adj_{query}_plot_pie.png')
-    
+    plt.savefig(f'static/adj_{query}_plot_pie.png')   
   
 def generate_verb_plot(query, graph_matches):
-    """Generate a pieplot of the most frequent verbs from the search results""" 
+    """Generate a pieplot of the most frequent verbs from the search results"""
+    
     #create a dictionary to track verb frequency
     dist_dict={}
     verbs = []
@@ -255,7 +256,7 @@ def generate_verb_plot(query, graph_matches):
         labels = dist_dict.keys()
         sizes = dist_dict.values()
         pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.pie(sizes, labels=labels, autopct=lambda p:f'{p*sum(sizes)/100 :.0f}', shadow=False, startangle=90)
         ax.set_title("Most frequent verbs")
     if len(dist_dict) > 10:
         top_10_verbs = []
@@ -266,7 +267,7 @@ def generate_verb_plot(query, graph_matches):
         labels = top_10_verbs
         sizes = [dist_dict[verb] for verb in top_10_verbs]
         pie_fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
+        ax.pie(sizes, labels=labels, autopct=lambda p:f'{p*sum(sizes)/100 :.0f}', shadow=False, startangle=90)
         verb_total = str(len(dist_dict))        #note: this won't match the value in PoS plot, since the data is lemmatised here, but not in PoS plot
         ax.set_title("10/" + verb_total + " most frequent verbs")
     
